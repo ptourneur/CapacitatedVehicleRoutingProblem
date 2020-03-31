@@ -1,22 +1,13 @@
 package com.polytech.ui;
 
 import de.saxsys.mvvmfx.ViewModel;
-import javafx.beans.property.DoubleProperty;
-import javafx.beans.property.SimpleDoubleProperty;
+import javafx.beans.property.*;
 
 public class ParamViewModel implements ViewModel {
 
-    private final DoubleProperty vehicleNumber = new SimpleDoubleProperty();
+    private final IntegerProperty vehicleNumber = new SimpleIntegerProperty(1);
 
-    public DoubleProperty vehicleNumber() {
+    public IntegerProperty vehicleNumber() {
         return vehicleNumber;
-    }
-
-    public double getVehicleNumber() {
-        return this.vehicleNumber.get();
-    }
-
-    public void setVehicleNumber(double vehicleNumber) {
-        this.vehicleNumber.set(vehicleNumber);
     }
 }
