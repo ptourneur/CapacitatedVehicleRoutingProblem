@@ -27,6 +27,12 @@
             <artifactId>mvvmfx</artifactId>
             <version>1.8.0</version>
         </dependency>
+        <!-- Logger -->
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-jdk14</artifactId>
+            <version>1.7.25</version>
+        </dependency>
     </dependencies>
     <build>
         <plugins>
