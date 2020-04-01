@@ -4,6 +4,7 @@ import de.saxsys.mvvmfx.FxmlView;
 import de.saxsys.mvvmfx.InjectViewModel;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.Slider;
 
@@ -16,6 +17,8 @@ public class ParamView implements FxmlView<ParamViewModel>, Initializable {
     private Label vehicleNumberLabel;
     @FXML
     private Slider vehicleNumberSlider;
+    @FXML
+    private Button launchButton;
 
     @InjectViewModel
     private ParamViewModel paramViewModel;
@@ -25,4 +28,14 @@ public class ParamView implements FxmlView<ParamViewModel>, Initializable {
         vehicleNumberLabel.textProperty().bind(paramViewModel.vehicleNumber().asString());
         vehicleNumberSlider.valueProperty().bindBidirectional(paramViewModel.vehicleNumber());
     }
+
+    @FXML
+    public void loadData() {
+        paramViewModel.loadData();
+    }
+
+    // TODO
+    @FXML
+    public void launchSimulation() { }
+
 }
