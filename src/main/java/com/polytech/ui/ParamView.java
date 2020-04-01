@@ -27,6 +27,7 @@ public class ParamView implements FxmlView<ParamViewModel>, Initializable {
     public void initialize(URL url, ResourceBundle resourceBundle) {
         vehicleNumberLabel.textProperty().bind(paramViewModel.vehicleNumber().asString());
         vehicleNumberSlider.valueProperty().bindBidirectional(paramViewModel.vehicleNumber());
+        launchButton.disableProperty().bind(paramViewModel.dataLoaded().not());
     }
 
     @FXML
