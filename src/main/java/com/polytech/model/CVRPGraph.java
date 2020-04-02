@@ -9,19 +9,16 @@ import java.util.stream.Stream;
 
 public class CVRPGraph {
 
-    private static final List<List<Route>> routingSolutions = new ArrayList<>(new ArrayList<>());
+    private static final List<Route> routingSolution = new ArrayList<>();
 
     private static final List<Stop> clientList = new ArrayList<>();
 
     private static Stop depot = null;
 
-    public static void loadDataFile(String path) {
+    public static void loadDataFile(String path) throws IOException {
         try (Stream<String> stream = Files.lines(Paths.get(path))) {
             clientList.clear();
             stream.skip(1).forEach(CVRPGraph::initializeClient);
-
-        } catch (IOException e) {
-            e.printStackTrace();
         }
     }
 
@@ -42,5 +39,13 @@ public class CVRPGraph {
 
     public static Stop getDepot() {
         return depot;
+    }
+
+    public static void setRoutingSolution(List<Route> solution) {
+        routingSolution.addAll(solution);
+    }
+
+    public static List<Route> getRoutingSolution() {
+        return routingSolution;
     }
 }

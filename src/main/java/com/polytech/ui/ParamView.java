@@ -27,9 +27,11 @@ public class ParamView implements FxmlView<ParamViewModel>, Initializable {
         paramViewModel.loadData();
     }
 
-    // TODO
     @FXML
-    public void launchSimulation() { }
+    public void launchSimulation() {
+        paramViewModel.launchSimulation();
+    }
+
     @InjectViewModel
     private ParamViewModel paramViewModel;
 

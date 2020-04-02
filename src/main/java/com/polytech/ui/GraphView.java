@@ -7,6 +7,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.Group;
 import javafx.scene.shape.Circle;
+import javafx.scene.shape.Line;
 
 import java.net.URL;
 import java.util.ResourceBundle;
@@ -14,15 +15,21 @@ import java.util.ResourceBundle;
 public class GraphView implements FxmlView<GraphViewModel>, Initializable {
 
     @FXML
-    private Group group;
+    private Group stopGroup;
+    @FXML
+    private Group stepGroup;
     @InjectViewModel
     private GraphViewModel graphViewModel;
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         graphViewModel.stopList().addListener((ListChangeListener<? super Circle>) change -> {
-            group.getChildren().clear();
-            group.getChildren().addAll(change.getList());
+            stopGroup.getChildren().clear();
+            stopGroup.getChildren().addAll(change.getList());
+        });
+        graphViewModel.stepList().addListener((ListChangeListener<? super Line>) change -> {
+            stepGroup.getChildren().clear();
+            stepGroup.getChildren().addAll(change.getList());
         });
     }
 }
