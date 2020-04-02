@@ -20,9 +20,9 @@ public class GraphView implements FxmlView<GraphViewModel>, Initializable {
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
-        graphViewModel.customerList().addListener((ListChangeListener<? super Circle>) change ->
-                group.getChildren().addAll(change.getList())
-        );
-        group.getChildren().addAll(graphViewModel.customerList());
+        graphViewModel.stopList().addListener((ListChangeListener<? super Circle>) change -> {
+            group.getChildren().clear();
+            group.getChildren().addAll(change.getList());
+        });
     }
 }

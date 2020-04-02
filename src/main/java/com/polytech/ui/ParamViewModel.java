@@ -1,6 +1,6 @@
 package com.polytech.ui;
 
-import com.polytech.model.CustomerList;
+import com.polytech.model.CVRPGraph;
 import de.saxsys.mvvmfx.InjectScope;
 import de.saxsys.mvvmfx.ViewModel;
 import javafx.beans.property.BooleanProperty;
@@ -14,13 +14,7 @@ public class ParamViewModel implements ViewModel {
     private CustomerScope scope;
 
     private final IntegerProperty vehicleNumber = new SimpleIntegerProperty(1);
-    private final BooleanProperty launchButtonDisable = new SimpleBooleanProperty(!CustomerList.getCustomerList().isEmpty());
-
-    public void initialize() {
-        scope.subscribe("LOADED", (key, payload) ->
-                launchButtonDisable.setValue(!CustomerList.getCustomerList().isEmpty())
-        );
-    }
+    private final BooleanProperty launchButtonDisable = new SimpleBooleanProperty(!CVRPGraph.getClientList().isEmpty());
 
     public IntegerProperty vehicleNumber() {
         return vehicleNumber;
@@ -31,7 +25,8 @@ public class ParamViewModel implements ViewModel {
     }
 
     public void loadData() {
-        CustomerList.loadDataFile("src/main/resources/data/data01.txt");
+        CVRPGraph.loadDataFile("src/main/resources/data/data01.txt");
         scope.publish("LOADED");
+        launchButtonDisable.setValue(!CVRPGraph.getClientList().isEmpty());
     }
 }

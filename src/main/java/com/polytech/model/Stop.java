@@ -3,7 +3,7 @@ package com.polytech.model;
 import lombok.Getter;
 
 @Getter
-public class Customer {
+public class Stop {
 
     private final int id;
     private final double x;
@@ -12,7 +12,7 @@ public class Customer {
 
     public boolean isDepot() { return id == 0; }
 
-    public Customer(int id, double x, double y, int quantity) {
+    public Stop(int id, double x, double y, int quantity) {
         this.id = id;
         this.x = x;
         this.y = y;
