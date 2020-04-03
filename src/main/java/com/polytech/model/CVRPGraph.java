@@ -48,4 +48,6 @@ public class CVRPGraph {
     public static List<Route> getRoutingSolution() {
         return routingSolution;
     }
+
+    public static void reinitializeRoutingSolution() { routingSolution.clear(); }
 }

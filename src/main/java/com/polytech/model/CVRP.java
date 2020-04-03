@@ -8,7 +8,7 @@ public final class CVRP {
 
     private static final double VEHICLE_CAPACITY = 100;
 
-    public static void generateRandomSolution() {
+    public static void greedySolution() {
         List<Route> randomRoutingSolution = new ArrayList<>();
 
         List<Stop> stopList = CVRPGraph.getClientList();
