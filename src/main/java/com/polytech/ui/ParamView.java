@@ -7,7 +7,6 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
-import javafx.scene.control.Slider;
 
 import java.net.URL;
 import java.util.ResourceBundle;
@@ -15,18 +14,18 @@ import java.util.ResourceBundle;
 public class ParamView implements FxmlView<ParamViewModel>, Initializable {
 
     @FXML
-    private Label vehicleNumberLabel;
+    private Label clientNumberValue;
     @FXML
-    private Slider vehicleNumberSlider;
+    private Label vehicleNumberValue;
+    @FXML
+    private Label totalDistanceValue;
     @FXML
     private Button launchButton;
-
 
     @FXML
     public void loadData() {
         paramViewModel.loadData();
     }
-
     @FXML
     public void launchSimulation() {
         paramViewModel.launchSimulation();
@@ -37,8 +36,9 @@ public class ParamView implements FxmlView<ParamViewModel>, Initializable {
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
-        vehicleNumberLabel.textProperty().bind(paramViewModel.vehicleNumber().asString());
-        vehicleNumberSlider.valueProperty().bindBidirectional(paramViewModel.vehicleNumber());
+        clientNumberValue.textProperty().bind(paramViewModel.clientNumber().asString());
+        vehicleNumberValue.textProperty().bind(paramViewModel.vehicleNumber().asString());
+        totalDistanceValue.textProperty().bind(paramViewModel.totalDistance().asString());
         launchButton.disableProperty().bind(paramViewModel.dataLoaded().not());
 
         paramViewModel.subscribe(ParamViewModel.ERROR_ALERT, (key, payload) -> {

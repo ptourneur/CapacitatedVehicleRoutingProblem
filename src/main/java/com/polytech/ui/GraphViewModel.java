@@ -18,6 +18,8 @@ import java.util.stream.Collectors;
 
 public class GraphViewModel implements ViewModel {
 
+    private static final double UI_UNIT = 7.5;
+
     private final ObservableList<Circle> stopList = FXCollections.observableArrayList();
     private final ObservableList<Line> stepList = FXCollections.observableArrayList();
 
@@ -26,6 +28,7 @@ public class GraphViewModel implements ViewModel {
 
     public void initialize() {
         scope.subscribe("STOP_LOADED", (key, payload) -> {
+            stepList.clear();
             stopList.clear();
             Stop depot = CVRPGraph.getDepot();
             stopList.add(new Circle(toUiUnit(depot.getX()), toUiUnit(depot.getY()), 3, Color.BLACK));
@@ -61,6 +64,6 @@ public class GraphViewModel implements ViewModel {
     }
 
     private double toUiUnit(double coordinate) {
-        return (coordinate*3.5)+3.5;
+        return (coordinate*UI_UNIT)+UI_UNIT;
     }
 }

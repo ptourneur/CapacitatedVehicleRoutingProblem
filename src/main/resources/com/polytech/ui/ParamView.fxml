@@ -1,15 +1,72 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 
-<?import javafx.scene.control.Button?>
-<?import javafx.scene.control.Label?>
-<?import javafx.scene.control.Slider?>
+<?import javafx.scene.control.*?>
 <?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.text.*?>
+<AnchorPane xmlns="http://javafx.com/javafx/14" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="com.polytech.ui.ParamView">
+    <AnchorPane layoutX="794.0" layoutY="14.0" prefHeight="203.0" prefWidth="462.0" style="-fx-border-color: black;">
+        <Label layoutX="122.0" layoutY="14.0" text="Informations sur la solution" underline="true">
+            <font>
+                <Font size="18.0"/>
+            </font>
+        </Label>
+        <Label fx:id="clientNumberLabel" layoutX="21.0" layoutY="76.0" text="Nombre de clients :">
+            <font>
+                <Font size="14.0"/>
+            </font>
+        </Label>
+        <Label fx:id="clientNumberValue" layoutX="147.0" layoutY="76.0" text="0">
+            <font>
+                <Font size="14.0"/>
+            </font>
+        </Label>
+        <Label fx:id="vehicleNumberLabel" layoutX="21.0" layoutY="121.0" text="Nombre de véhicules :">
+            <font>
+                <Font size="14.0"/>
+            </font>
+        </Label>
+        <Label fx:id="vehicleNumberValue" layoutX="164.0" layoutY="121.0" text="0">
+            <font>
+                <Font size="14.0"/>
+            </font>
+        </Label>
+        <Label fx:id="totalDistanceLabel" layoutX="21.0" layoutY="165.0" text="Distance totale :">
+            <font>
+                <Font size="14.0"/>
+            </font>
+        </Label>
+        <Label fx:id="totalDistanceValue" layoutX="127.0" layoutY="165.0" text="0">
+            <font>
+                <Font size="14.0"/>
+            </font>
+        </Label>
+    </AnchorPane>
 
-<AnchorPane xmlns="http://javafx.com/javafx/14" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.polytech.ui.ParamView">
-      <Label layoutX="396.0" layoutY="240.0" text="Nombre de véhicules :" />
-      <Label fx:id="vehicleNumberLabel" layoutX="518.0" layoutY="240.0" />
-      <Slider fx:id="vehicleNumberSlider" blockIncrement="1.0" layoutX="396.0" layoutY="279.0" majorTickUnit="1.0" max="10.0" min="1.0" minorTickCount="0" prefHeight="14.0" prefWidth="215.0" showTickMarks="true" snapToTicks="true" />
-      <Button layoutX="377.0" layoutY="332.0" mnemonicParsing="false" text="Charger les données" onAction="#loadData"/>
-      <Button fx:id="launchButton" layoutX="509.0" layoutY="332.0" mnemonicParsing="false" text="Lancer la simulation" onAction="#launchSimulation"/>
+    <Label layoutX="794.0" layoutY="587.0" text="Choisissez un algorithme :">
+        <font>
+            <Font size="14.0"/>
+        </font>
+    </Label>
+    <RadioButton layoutX="974.0" layoutY="587.0" mnemonicParsing="false" text="Glouton">
+        <font>
+            <Font size="14.0"/>
+        </font>
+    </RadioButton>
+    <RadioButton layoutX="974.0" layoutY="614.0" mnemonicParsing="false" text="Recuit simulé">
+        <font>
+            <Font size="14.0"/>
+        </font>
+    </RadioButton>
+    <RadioButton layoutX="974.0" layoutY="641.0" mnemonicParsing="false" text="Tabou">
+        <font>
+            <Font size="14.0"/>
+        </font>
+    </RadioButton>
+
+    <Button layoutX="926.0" layoutY="719.0" mnemonicParsing="false" prefHeight="27.0" prefWidth="159.0"
+            text="Charger les données" onAction="#loadData"/>
+    <Button fx:id="launchButton" layoutX="1106.0" layoutY="719.0" mnemonicParsing="false" prefHeight="27.0" prefWidth="149.0"
+            text="Lancer la simulation" onAction="#launchSimulation"/>
 </AnchorPane>
