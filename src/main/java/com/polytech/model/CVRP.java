@@ -2,41 +2,46 @@ package com.polytech.model;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 public final class CVRP {
 
     private static final double VEHICLE_CAPACITY = 100;
 
     public static void greedySolution() {
-        List<Route> randomRoutingSolution = new ArrayList<>();
+        List<Route> greedySolution = new ArrayList<>();
 
         List<Stop> stopList = CVRPGraph.getClientList();
 
         Stop depot = CVRPGraph.getDepot();
 
         Route currentRoute = new Route(VEHICLE_CAPACITY);
-        for (Stop currentStop: stopList) {
-            // we compute the cost between the last stop of the route and the current stop
-            Stop lastStop = Optional.ofNullable(currentRoute.getLastStop()).orElse(depot);
-            double cost = computeCost(lastStop, currentStop);
-            if (currentRoute.getCost() + computeCost(currentStop, depot) <= currentRoute.getCapacity()) {
-                currentRoute.addStep(new Step(lastStop, currentStop, cost));
-            } else {
-                currentRoute.addStep(new Step(lastStop, depot, computeCost(lastStop, depot)));
-                randomRoutingSolution.add(currentRoute);
-                currentRoute = new Route(VEHICLE_CAPACITY);
-            }
-        }
+        greedySolution.add(currentRoute);
 
-        if (!currentRoute.isComplete()) {
-            Stop lastStop = currentRoute.getLastStop();
-            if (lastStop != null) {
+        while (stopList.stream().map(Stop::isRouted).anyMatch(isRouted -> !isRouted)) {
+            double minCost = Double.MAX_VALUE;
+            Stop lastStop = (currentRoute.getLastStop() == null ? depot : currentRoute.getLastStop());
+            Stop bestStop = null;
+
+            for (Stop currentStop: stopList) {
+                if (!currentStop.isRouted() &&
+                    currentRoute.getQuantity() + currentStop.getQuantity() <= currentRoute.getCapacity() &&
+                    currentRoute.getCost() + computeCost(lastStop, currentStop) < minCost) {
+                        bestStop = currentStop;
+                        minCost = currentRoute.getCost() + computeCost(lastStop, currentStop);
+                }
+            }
+
+            if (bestStop == null) {
                 currentRoute.addStep(new Step(lastStop, depot, computeCost(lastStop, depot)));
-                randomRoutingSolution.add(currentRoute);
+                currentRoute = new Route(VEHICLE_CAPACITY);
+                greedySolution.add(currentRoute);
+            } else {
+                currentRoute.addStep(new Step(lastStop, bestStop, computeCost(lastStop, bestStop)));
+                bestStop.setRouted(true);
             }
         }
-        CVRPGraph.setRoutingSolution(randomRoutingSolution);
+        currentRoute.addStep(new Step(currentRoute.getLastStop(), depot, computeCost(currentRoute.getLastStop(), depot)));
+        CVRPGraph.setRoutingSolution(greedySolution);
     }
 
     private static double computeCost(Stop initialStop, Stop finalStop) {

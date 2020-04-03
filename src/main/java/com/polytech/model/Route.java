@@ -1,17 +1,21 @@
 package com.polytech.model;
 
 import lombok.Getter;
-import lombok.RequiredArgsConstructor;
 
 import java.util.LinkedList;
 import java.util.List;
 
 @Getter
-@RequiredArgsConstructor
 public class Route {
 
-    private final double capacity;
     private final List<Step> stepList = new LinkedList<>();
+    private final double capacity;
+    private double quantity;
+
+    public Route(double capacity) {
+        this.capacity = capacity;
+        this.quantity = 0;
+    }
 
     public boolean isComplete() {
         Stop initialStop = getFirstStop();
@@ -21,6 +25,7 @@ public class Route {
 
     public void addStep(Step step) {
         stepList.add(step);
+        quantity += step.getArrivalStop().getQuantity();
     }
 
     public double getCost() {

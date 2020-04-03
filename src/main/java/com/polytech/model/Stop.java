@@ -9,6 +9,7 @@ public class Stop {
     private final double x;
     private final double y;
     private final int quantity;
+    private boolean routed;
 
     public boolean isDepot() { return id == 0; }
 
@@ -17,5 +18,10 @@ public class Stop {
         this.x = x;
         this.y = y;
         this.quantity = quantity;
+        this.routed = false;
+    }
+
+    public void setRouted(boolean routed) {
+        this.routed = routed;
     }
 }
