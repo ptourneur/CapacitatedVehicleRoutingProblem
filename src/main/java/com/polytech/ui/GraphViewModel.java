@@ -33,7 +33,11 @@ public class GraphViewModel implements ViewModel {
             Stop depot = CVRPGraph.getDepot();
             stopList.add(new Circle(toUiUnit(depot.getX()), toUiUnit(depot.getY()), 3, Color.BLACK));
             stopList.addAll(CVRPGraph.getClientList().stream()
-                    .map(stop -> new Circle(toUiUnit(stop.getX()), toUiUnit(stop.getY()), 3, Color.RED))
+                    .map(stop -> {
+                        Circle circle = new Circle(toUiUnit(stop.getX()), toUiUnit(stop.getY()), 3, Color.RED);
+                        circle.setOnMouseClicked(mouseEvent -> System.out.println(mouseEvent.getEventType().getName()));
+                        return circle;
+                    })
                     .collect(Collectors.toList()));
         });
 
