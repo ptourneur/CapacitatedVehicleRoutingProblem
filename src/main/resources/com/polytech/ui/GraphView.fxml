@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.scene.layout.AnchorPane?>
-<?import javafx.scene.canvas.Canvas?>
 <?import javafx.scene.Group?>
+
 <AnchorPane layoutX="17.0" layoutY="12.0" prefHeight="750.0" prefWidth="750.0" style="-fx-background-color: floralwhite;" xmlns="http://javafx.com/javafx/14" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.polytech.ui.GraphView">
     <Group fx:id="stepGroup" />
     <Group fx:id="stopGroup" />

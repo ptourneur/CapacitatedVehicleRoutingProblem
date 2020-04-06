@@ -4,7 +4,7 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.text.*?>
-<?import javafx.scene.Group?>
+
 <AnchorPane xmlns="http://javafx.com/javafx/14" xmlns:fx="http://javafx.com/fxml/1"
             fx:controller="com.polytech.ui.ParamView">
     <AnchorPane layoutX="794.0" layoutY="14.0" prefHeight="203.0" prefWidth="462.0" style="-fx-border-color: black;">
@@ -13,7 +13,7 @@
                 <Font size="18.0"/>
             </font>
         </Label>
-        <Label fx:id="clientNumberLabel" layoutX="21.0" layoutY="76.0" text="Nombre de clients :">
+        <Label layoutX="21.0" layoutY="76.0" text="Nombre de clients :">
             <font>
                 <Font size="14.0"/>
             </font>
@@ -23,7 +23,7 @@
                 <Font size="14.0"/>
             </font>
         </Label>
-        <Label fx:id="vehicleNumberLabel" layoutX="21.0" layoutY="121.0" text="Nombre de véhicules :">
+        <Label layoutX="21.0" layoutY="121.0" text="Nombre de véhicules :">
             <font>
                 <Font size="14.0"/>
             </font>
@@ -33,7 +33,7 @@
                 <Font size="14.0"/>
             </font>
         </Label>
-        <Label fx:id="totalDistanceLabel" layoutX="21.0" layoutY="165.0" text="Distance totale :">
+        <Label layoutX="21.0" layoutY="165.0" text="Distance totale :">
             <font>
                 <Font size="14.0"/>
             </font>
@@ -44,6 +44,13 @@
             </font>
         </Label>
     </AnchorPane>
+
+    <Label layoutX="794.0" layoutY="547.0" text="Afficher les quantités :">
+        <font>
+            <Font size="14.0"/>
+        </font>
+    </Label>
+    <CheckBox fx:id="displayLabelCheckBox" layoutX="940.0" layoutY="548.0"/>
 
     <Label layoutX="794.0" layoutY="587.0" text="Choisissez un algorithme :">
         <font>

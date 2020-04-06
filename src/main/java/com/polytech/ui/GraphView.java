@@ -6,7 +6,6 @@ import javafx.collections.ListChangeListener;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.Group;
-import javafx.scene.shape.Circle;
 import javafx.scene.shape.Line;
 
 import java.net.URL;
@@ -23,7 +22,7 @@ public class GraphView implements FxmlView<GraphViewModel>, Initializable {
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
-        graphViewModel.stopList().addListener((ListChangeListener<? super Circle>) change -> {
+        graphViewModel.stopList().addListener((ListChangeListener<? super Group>) change -> {
             stopGroup.getChildren().clear();
             stopGroup.getChildren().addAll(change.getList());
         });

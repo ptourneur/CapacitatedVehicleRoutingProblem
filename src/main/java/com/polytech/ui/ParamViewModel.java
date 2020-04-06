@@ -25,6 +25,8 @@ public class ParamViewModel implements ViewModel {
     private final IntegerProperty vehicleNumber = new SimpleIntegerProperty(0);
     private final DoubleProperty totalDistance = new SimpleDoubleProperty(0.0);
 
+    private final BooleanProperty displayLabel = new SimpleBooleanProperty();
+
     private final BooleanProperty greedySolution = new SimpleBooleanProperty();
     private final BooleanProperty simulatedAnnealingSolution = new SimpleBooleanProperty();
     private final BooleanProperty tabuSolution = new SimpleBooleanProperty();
@@ -42,6 +44,8 @@ public class ParamViewModel implements ViewModel {
     public DoubleProperty totalDistance() {
         return totalDistance;
     }
+
+    public BooleanProperty displayLabel() { return scope.displayLabel(); }
 
     public BooleanProperty greedySolution() { return greedySolution; }
 
