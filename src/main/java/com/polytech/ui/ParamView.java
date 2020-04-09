@@ -18,9 +18,6 @@ public class ParamView implements FxmlView<ParamViewModel>, Initializable {
     @FXML
     private Label totalDistanceValue;
 
-    @FXML
-    private CheckBox displayLabelCheckBox;
-
     private ToggleGroup radioButtonGroup = new ToggleGroup();
     @FXML
     private RadioButton greedySolutionButton;
@@ -49,8 +46,6 @@ public class ParamView implements FxmlView<ParamViewModel>, Initializable {
         clientNumberValue.textProperty().bind(paramViewModel.clientNumber().asString());
         vehicleNumberValue.textProperty().bind(paramViewModel.vehicleNumber().asString());
         totalDistanceValue.textProperty().bind(paramViewModel.totalDistance().asString());
-
-        paramViewModel.displayLabel().bind(displayLabelCheckBox.selectedProperty());
 
         greedySolutionButton.setToggleGroup(radioButtonGroup);
         paramViewModel.greedySolution().bind(greedySolutionButton.selectedProperty());

@@ -71,14 +71,6 @@
                     <padding>
                         <Insets top="15" right="10" bottom="50" left="10"/>
                     </padding>
-                    <HBox spacing="8">
-                        <Label layoutX="10" layoutY="248.0" text="Afficher les quantités :">
-                            <font>
-                                <Font size="14.0"/>
-                            </font>
-                        </Label>
-                        <CheckBox fx:id="displayLabelCheckBox"/>
-                    </HBox>
 
                     <HBox spacing="10">
                         <Label layoutX="10" layoutY="587.0" text="Choisissez un algorithme :">

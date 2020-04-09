@@ -6,7 +6,6 @@ import javafx.collections.ListChangeListener;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.Group;
-import javafx.scene.shape.Line;
 
 import java.net.URL;
 import java.util.ResourceBundle;
@@ -26,7 +25,7 @@ public class GraphView implements FxmlView<GraphViewModel>, Initializable {
             stopGroup.getChildren().clear();
             stopGroup.getChildren().addAll(change.getList());
         });
-        graphViewModel.stepList().addListener((ListChangeListener<? super Line>) change -> {
+        graphViewModel.stepList().addListener((ListChangeListener<? super Group>) change -> {
             stepGroup.getChildren().clear();
             stepGroup.getChildren().addAll(change.getList());
         });

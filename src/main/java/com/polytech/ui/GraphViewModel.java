@@ -15,7 +15,6 @@ import javafx.scene.shape.Line;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -24,7 +23,7 @@ public class GraphViewModel implements ViewModel {
     private static final double UI_UNIT = 7.4;
 
     private final ObservableList<Group> stopList = FXCollections.observableArrayList();
-    private final ObservableList<Line> stepList = FXCollections.observableArrayList();
+    private final ObservableList<Group> stepList = FXCollections.observableArrayList();
 
     @InjectScope
     private CustomerScope scope;
@@ -44,18 +43,30 @@ public class GraphViewModel implements ViewModel {
         scope.subscribe("ROUTE_LOADED", (key, payload) -> {
             stepList.clear();
             List<Route> routes = CVRPGraph.getRoutingSolution();
-            List<Line> lines = new ArrayList<>();
-            for (Route route: routes) {
+            for (Route route : routes) {
                 Color color = Color.color(Math.random(), Math.random(), Math.random());
                 List<Step> steps = route.getStepList();
-                for (Step step: steps) {
+                Group group = new Group();
+                Group labelGroup = new Group();
+                labelGroup.setVisible(false);
+                for (Step step : steps) {
                     Line line = new Line(toUiUnit(step.getDepartureStop().getX()), toUiUnit(step.getDepartureStop().getY()),
                             toUiUnit(step.getArrivalStop().getX()), toUiUnit(step.getArrivalStop().getY()));
                     line.setStroke(color);
-                    lines.add(line);
+                    Line lineForEventTriggering = new Line(toUiUnit(step.getDepartureStop().getX()), toUiUnit(step.getDepartureStop().getY()),
+                            toUiUnit(step.getArrivalStop().getX()), toUiUnit(step.getArrivalStop().getY()));
+                    lineForEventTriggering.setStrokeWidth(10);
+                    lineForEventTriggering.setStroke(Color.TRANSPARENT);
+                    Text text = new Text((line.getStartX() + (line.getEndX() - line.getStartX()) / 2), (line.getStartY() + (line.getEndY() - line.getStartY()) / 2),
+                            String.valueOf((double) Math.round(step.getCost() * 100) / 100));
+                    text.setFont(Font.font("Arial", 9));
+                    lineForEventTriggering.setOnMouseEntered(mouseEvent -> labelGroup.setVisible(true));
+                    lineForEventTriggering.setOnMouseExited(mouseEvent -> labelGroup.setVisible(false));
+                    group.getChildren().addAll(line, lineForEventTriggering);
+                    labelGroup.getChildren().add(text);
                 }
+                stepList.addAll(group, labelGroup);
             }
-            stepList.addAll(lines);
         });
     }
 
@@ -63,22 +74,22 @@ public class GraphViewModel implements ViewModel {
         return stopList;
     }
 
-    public ObservableList<Line> stepList() {
+    public ObservableList<Group> stepList() {
         return stepList;
     }
 
     private Group initializeCircleGroup(Stop stop) {
         Circle circle = new Circle(toUiUnit(stop.getX()), toUiUnit(stop.getY()), 3, Color.RED);
-        if (scope.displayLabel().get()) {
-            Text text = new Text(circle.getCenterX() - 5, circle.getCenterY() - 4, String.valueOf(stop.getQuantity()));
-            text.setFont(Font.font("Arial", 9));
-            return new Group(circle, text);
-        } else {
-            return new Group(circle);
-        }
+        Circle circleForEventTriggering = new Circle(toUiUnit(stop.getX()), toUiUnit(stop.getY()), 6, Color.TRANSPARENT);
+        Text text = new Text(circle.getCenterX() - 5, circle.getCenterY() - 4, String.valueOf(stop.getQuantity()));
+        text.setFont(Font.font("Arial", 9));
+        text.setVisible(false);
+        circleForEventTriggering.setOnMouseEntered(mouseEvent -> text.setVisible(true));
+        circleForEventTriggering.setOnMouseExited(mouseEvent -> text.setVisible(false));
+        return new Group(circle, circleForEventTriggering, text);
     }
 
     private double toUiUnit(double coordinate) {
-        return (coordinate*UI_UNIT)+UI_UNIT;
+        return (coordinate * UI_UNIT) + UI_UNIT;
     }
 }
