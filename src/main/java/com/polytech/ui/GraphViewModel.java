@@ -21,7 +21,7 @@ import java.util.stream.Collectors;
 
 public class GraphViewModel implements ViewModel {
 
-    private static final double UI_UNIT = 7.5;
+    private static final double UI_UNIT = 7.4;
 
     private final ObservableList<Group> stopList = FXCollections.observableArrayList();
     private final ObservableList<Line> stepList = FXCollections.observableArrayList();

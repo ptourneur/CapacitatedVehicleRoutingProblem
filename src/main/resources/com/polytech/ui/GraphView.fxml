@@ -1,9 +1,32 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.Group?>
+<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.FlowPane?>
+<?import javafx.scene.layout.BorderPane?>
+<ScrollPane xmlns="http://javafx.com/javafx/14" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="com.polytech.ui.GraphView">
+    <BorderPane>
+        <top>
+            <Pane prefWidth="15" prefHeight="15" BorderPane.alignment="CENTER"/>
+        </top>
+        <left>
+            <Pane prefWidth="15" prefHeight="15" BorderPane.alignment="CENTER"/>
+        </left>
+        <right>
+            <Pane prefWidth="15" prefHeight="15" BorderPane.alignment="CENTER"/>
+        </right>
+        <bottom>
+            <Pane prefWidth="15" prefHeight="15" BorderPane.alignment="CENTER"/>
+        </bottom>
+        <center>
+            <Pane prefWidth="740" prefHeight="740" BorderPane.alignment="CENTER" style="-fx-background-color: floralwhite;">
+                <Group fx:id="stepGroup"/>
+                <Group fx:id="stopGroup"/>
+            </Pane>
+        </center>
 
-<AnchorPane layoutX="17.0" layoutY="12.0" prefHeight="750.0" prefWidth="750.0" style="-fx-background-color: floralwhite;" xmlns="http://javafx.com/javafx/14" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.polytech.ui.GraphView">
-    <Group fx:id="stepGroup" />
-    <Group fx:id="stopGroup" />
-</AnchorPane>
+    </BorderPane>
+</ScrollPane>
