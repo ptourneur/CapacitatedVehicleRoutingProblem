@@ -12,11 +12,11 @@ import java.util.ResourceBundle;
 public class ParamView implements FxmlView<ParamViewModel>, Initializable {
 
     @FXML
-    private Label clientNumberValue;
+    private Label totalClientNumber;
     @FXML
-    private Label vehicleNumberValue;
+    private Label totalVehicleNumber;
     @FXML
-    private Label totalDistanceValue;
+    private Label totalDistance;
 
     private ToggleGroup radioButtonGroup = new ToggleGroup();
     @FXML
@@ -43,9 +43,9 @@ public class ParamView implements FxmlView<ParamViewModel>, Initializable {
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
-        clientNumberValue.textProperty().bind(paramViewModel.clientNumber().asString());
-        vehicleNumberValue.textProperty().bind(paramViewModel.vehicleNumber().asString());
-        totalDistanceValue.textProperty().bind(paramViewModel.totalDistance().asString());
+        totalClientNumber.textProperty().bind(paramViewModel.clientNumber().asString());
+        totalVehicleNumber.textProperty().bind(paramViewModel.vehicleNumber().asString());
+        totalDistance.textProperty().bind(paramViewModel.totalDistance().asString());
 
         greedySolutionButton.setToggleGroup(radioButtonGroup);
         paramViewModel.greedySolution().bind(greedySolutionButton.selectedProperty());

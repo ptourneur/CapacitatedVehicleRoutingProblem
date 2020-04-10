@@ -4,8 +4,8 @@
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
-<?import javafx.scene.shape.Box?>
 <?import javafx.scene.text.*?>
+
 <ScrollPane xmlns="http://javafx.com/javafx/14" xmlns:fx="http://javafx.com/fxml/1"
             fx:controller="com.polytech.ui.ParamView" fitToWidth="true" fitToHeight="true">
     <VBox>
@@ -13,7 +13,7 @@
             <Insets top="15" right="10" bottom="15" left="10"/>
         </padding>
         <HBox alignment="CENTER">
-            <VBox prefWidth="400.0" style="-fx-border-color: black;" spacing="10">
+            <VBox prefWidth="400.0" style="-fx-border-color: black;" spacing="5">
                 <padding>
                     <Insets top="15" right="10" bottom="15" left="10"/>
                 </padding>
@@ -21,47 +21,115 @@
                     <padding>
                         <Insets bottom="10"/>
                     </padding>
-                    <Label layoutX="122.0" layoutY="14.0" text="Informations sur la solution" underline="true">
+                    <Label text="Informations sur la solution" underline="true">
                         <font>
                             <Font size="18.0"/>
                         </font>
                     </Label>
                 </HBox>
-                <HBox spacing="8">
-                    <Label layoutX="21.0" layoutY="76.0" text="Nombre de clients :">
-                        <font>
-                            <Font size="14.0"/>
-                        </font>
-                    </Label>
-                    <Label fx:id="clientNumberValue" layoutX="147.0" layoutY="76.0" text="0">
-                        <font>
-                            <Font size="14.0"/>
-                        </font>
-                    </Label>
-                </HBox>
-                <HBox spacing="8">
-                    <Label layoutX="21.0" layoutY="121.0" text="Nombre de véhicules :">
-                        <font>
-                            <Font size="14.0"/>
-                        </font>
-                    </Label>
-                    <Label fx:id="vehicleNumberValue" layoutX="164.0" layoutY="121.0" text="0">
-                        <font>
-                            <Font size="14.0"/>
-                        </font>
-                    </Label>
-                </HBox>
-                <HBox spacing="8">
-                    <Label layoutX="21.0" layoutY="165.0" text="Distance totale :">
-                        <font>
-                            <Font size="14.0"/>
-                        </font>
-                    </Label>
-                    <Label fx:id="totalDistanceValue" layoutX="127.0" layoutY="165.0" text="0">
-                        <font>
-                            <Font size="14.0"/>
-                        </font>
-                    </Label>
+                <HBox spacing="80">
+                    <VBox spacing="5">
+                        <Label text="Global" underline="true">
+                            <font>
+                                <Font size="13.0"/>
+                            </font>
+                        </Label>
+                        <VBox>
+                            <HBox spacing="8">
+                                <Label text="Nombre de clients :">
+                                    <font>
+                                        <Font size="11.0"/>
+                                    </font>
+                                </Label>
+                                <Label fx:id="totalClientNumber" text="0">
+                                    <font>
+                                        <Font size="11.0"/>
+                                    </font>
+                                </Label>
+                            </HBox>
+                            <HBox spacing="8">
+                                <Label text="Distance totale :">
+                                    <font>
+                                        <Font size="11.0"/>
+                                    </font>
+                                </Label>
+                                <Label fx:id="totalDistance" text="0">
+                                    <font>
+                                        <Font size="11.0"/>
+                                    </font>
+                                </Label>
+                            </HBox>
+                            <HBox spacing="8">
+                                <Label text="Nombre de véhicules :">
+                                    <font>
+                                        <Font size="11.0"/>
+                                    </font>
+                                </Label>
+                                <Label fx:id="totalVehicleNumber" text="0">
+                                    <font>
+                                        <Font size="11.0"/>
+                                    </font>
+                                </Label>
+                            </HBox>
+                        </VBox>
+                    </VBox>
+                    <VBox spacing="5">
+                        <Label text="Trajet selectionné" underline="true">
+                            <font>
+                                <Font size="13.0"/>
+                            </font>
+                        </Label>
+                        <VBox>
+                            <HBox spacing="8">
+                                <Label text="Nombre de clients :">
+                                    <font>
+                                        <Font size="11.0"/>
+                                    </font>
+                                </Label>
+                                <Label fx:id="selectedVehicleClientNumber" text="0">
+                                    <font>
+                                        <Font size="11.0"/>
+                                    </font>
+                                </Label>
+                            </HBox>
+                            <HBox spacing="8">
+                                <Label text="Distance du trajet :">
+                                    <font>
+                                        <Font size="11.0"/>
+                                    </font>
+                                </Label>
+                                <Label fx:id="selectedVehicleDistance" text="0">
+                                    <font>
+                                        <Font size="11.0"/>
+                                    </font>
+                                </Label>
+                            </HBox>
+                            <HBox spacing="8">
+                                <Label text="Charge du véhicule :">
+                                    <font>
+                                        <Font size="11.0"/>
+                                    </font>
+                                </Label>
+                                <HBox>
+                                    <Label fx:id="selectedVehicleCharge" text="0">
+                                        <font>
+                                            <Font size="11.0"/>
+                                        </font>
+                                    </Label>
+                                    <Label text="/">
+                                        <font>
+                                            <Font size="11.0"/>
+                                        </font>
+                                    </Label>
+                                    <Label fx:id="selectedVehicleCapacity" text="0">
+                                        <font>
+                                            <Font size="11.0"/>
+                                        </font>
+                                    </Label>
+                                </HBox>
+                            </HBox>
+                        </VBox>
+                    </VBox>
                 </HBox>
             </VBox>
         </HBox>
@@ -73,28 +141,23 @@
                     </padding>
 
                     <HBox spacing="10">
-                        <Label layoutX="10" layoutY="587.0" text="Choisissez un algorithme :">
+                        <Label text="Choisissez un algorithme :">
                             <font>
                                 <Font size="14.0"/>
                             </font>
                         </Label>
                         <VBox spacing="10">
-                            <RadioButton fx:id="greedySolutionButton"
-                                         text="Glouton"
-                                         selected="true">
+                            <RadioButton fx:id="greedySolutionButton" text="Glouton" selected="true">
                                 <font>
                                     <Font size="14.0"/>
                                 </font>
                             </RadioButton>
-                            <RadioButton fx:id="simulatedAnnealingSolutionButton" layoutX="10" layoutY="314.0"
-                                         mnemonicParsing="false"
-                                         text="Recuit simulé">
+                            <RadioButton fx:id="simulatedAnnealingSolutionButton" text="Recuit simulé">
                                 <font>
                                     <Font size="14.0"/>
                                 </font>
                             </RadioButton>
-                            <RadioButton fx:id="tabuSolutionButton"
-                                         text="Tabou">
+                            <RadioButton fx:id="tabuSolutionButton" text="Tabou">
                                 <font>
                                     <Font size="14.0"/>
                                 </font>
