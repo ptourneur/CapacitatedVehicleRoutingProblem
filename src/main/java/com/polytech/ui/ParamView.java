@@ -14,9 +14,18 @@ public class ParamView implements FxmlView<ParamViewModel>, Initializable {
     @FXML
     private Label totalClientNumber;
     @FXML
-    private Label totalVehicleNumber;
-    @FXML
     private Label totalDistance;
+    @FXML
+    private Label totalVehicleNumber;
+
+    @FXML
+    private Label selectedVehicleClientNumber;
+    @FXML
+    private Label selectedVehicleDistance;
+    @FXML
+    private Label selectedVehicleCharge;
+    @FXML
+    private Label selectedVehicleCapacity;
 
     private ToggleGroup radioButtonGroup = new ToggleGroup();
     @FXML
@@ -43,9 +52,14 @@ public class ParamView implements FxmlView<ParamViewModel>, Initializable {
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
-        totalClientNumber.textProperty().bind(paramViewModel.clientNumber().asString());
-        totalVehicleNumber.textProperty().bind(paramViewModel.vehicleNumber().asString());
+        totalClientNumber.textProperty().bind(paramViewModel.totalClientNumber().asString());
         totalDistance.textProperty().bind(paramViewModel.totalDistance().asString());
+        totalVehicleNumber.textProperty().bind(paramViewModel.totalVehicleNumber().asString());
+
+        selectedVehicleClientNumber.textProperty().bind(paramViewModel.selectedVehicleClientNumber().asString());
+        selectedVehicleDistance.textProperty().bind(paramViewModel.selectedVehicleDistance().asString());
+        selectedVehicleCharge.textProperty().bind(paramViewModel.selectedVehicleCharge().asString());
+        selectedVehicleCapacity.textProperty().bind(paramViewModel.selectedVehicleCapacity().asString());
 
         greedySolutionButton.setToggleGroup(radioButtonGroup);
         paramViewModel.greedySolution().bind(greedySolutionButton.selectedProperty());

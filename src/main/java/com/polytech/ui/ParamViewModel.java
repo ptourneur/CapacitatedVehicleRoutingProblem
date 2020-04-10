@@ -20,10 +20,9 @@ public class ParamViewModel implements ViewModel {
     @InjectScope
     private CustomerScope scope;
 
-
-    private final IntegerProperty clientNumber = new SimpleIntegerProperty(0);
-    private final IntegerProperty vehicleNumber = new SimpleIntegerProperty(0);
+    private final IntegerProperty totalClientNumber = new SimpleIntegerProperty(0);
     private final DoubleProperty totalDistance = new SimpleDoubleProperty(0.0);
+    private final IntegerProperty totalVehicleNumber = new SimpleIntegerProperty(0);
 
     private final BooleanProperty greedySolution = new SimpleBooleanProperty();
     private final BooleanProperty simulatedAnnealingSolution = new SimpleBooleanProperty();
@@ -31,17 +30,25 @@ public class ParamViewModel implements ViewModel {
 
     private final BooleanProperty launchButtonDisable = new SimpleBooleanProperty(!CVRPGraph.getClientList().isEmpty());
 
-    public IntegerProperty clientNumber() {
-        return clientNumber;
-    }
-
-    public IntegerProperty vehicleNumber() {
-        return vehicleNumber;
+    public IntegerProperty totalClientNumber() {
+        return totalClientNumber;
     }
 
     public DoubleProperty totalDistance() {
         return totalDistance;
     }
+
+    public IntegerProperty totalVehicleNumber() {
+        return totalVehicleNumber;
+    }
+
+    public IntegerProperty selectedVehicleClientNumber() { return scope.selectedVehicleClientNumber(); }
+
+    public DoubleProperty selectedVehicleDistance() { return scope.selectedVehicleDistance(); }
+
+    public DoubleProperty selectedVehicleCharge() { return scope.selectedVehicleCharge(); }
+
+    public DoubleProperty selectedVehicleCapacity() { return scope.selectedVehicleCapacity(); }
 
     public BooleanProperty greedySolution() { return greedySolution; }
 
@@ -79,9 +86,9 @@ public class ParamViewModel implements ViewModel {
     }
 
     private void refreshSolutionInformation() {
-        clientNumber.setValue(CVRPGraph.getClientList().size());
+        totalClientNumber.setValue(CVRPGraph.getClientList().size());
         List<Route> routingSolution = CVRPGraph.getRoutingSolution();
-        vehicleNumber.setValue(routingSolution.size());
+        totalVehicleNumber.setValue(routingSolution.size());
         totalDistance.setValue((double) Math.round(routingSolution.stream()
                 .map(Route::getStepList)
                 .flatMap(Collection::stream)

@@ -58,10 +58,10 @@ public class GraphViewModel implements ViewModel {
                     lineForEventTriggering.setStrokeWidth(10);
                     lineForEventTriggering.setStroke(Color.TRANSPARENT);
                     Text text = new Text((line.getStartX() + (line.getEndX() - line.getStartX()) / 2), (line.getStartY() + (line.getEndY() - line.getStartY()) / 2),
-                            String.valueOf((double) Math.round(step.getCost() * 100) / 100));
+                            String.valueOf((double) Math.round(step.getCost() * 10) / 10));
                     text.setFont(Font.font("Arial", 9));
-                    lineForEventTriggering.setOnMouseEntered(mouseEvent -> labelGroup.setVisible(true));
-                    lineForEventTriggering.setOnMouseExited(mouseEvent -> labelGroup.setVisible(false));
+                    lineForEventTriggering.setOnMouseEntered(mouseEvent -> handleMouseEntered(labelGroup, route));
+                    lineForEventTriggering.setOnMouseExited(mouseEvent -> handleMouseExited(labelGroup));
                     group.getChildren().addAll(line, lineForEventTriggering);
                     labelGroup.getChildren().add(text);
                 }
@@ -87,6 +87,22 @@ public class GraphViewModel implements ViewModel {
         circleForEventTriggering.setOnMouseEntered(mouseEvent -> text.setVisible(true));
         circleForEventTriggering.setOnMouseExited(mouseEvent -> text.setVisible(false));
         return new Group(circle, circleForEventTriggering, text);
+    }
+
+    private void handleMouseEntered(Group labelGroup, Route selectedRoute) {
+        labelGroup.setVisible(true);
+        scope.selectedVehicleClientNumber().setValue(selectedRoute.getStepList().size() - 1);
+        scope.selectedVehicleDistance().setValue((double) Math.round(selectedRoute.getCost() * 10) / 10);
+        scope.selectedVehicleCharge().setValue((double) Math.round(selectedRoute.getQuantity() * 10) / 10);
+        scope.selectedVehicleCapacity().setValue((double) Math.round(selectedRoute.getCapacity() * 10) / 10);
+    }
+
+    private void handleMouseExited(Group labelGroup) {
+        labelGroup.setVisible(false);
+        scope.selectedVehicleClientNumber().setValue(0);
+        scope.selectedVehicleDistance().setValue(0);
+        scope.selectedVehicleCharge().setValue(0);
+        scope.selectedVehicleCapacity().setValue(0);
     }
 
     private double toUiUnit(double coordinate) {
