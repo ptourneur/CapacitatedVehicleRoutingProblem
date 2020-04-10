@@ -5,6 +5,8 @@ import de.saxsys.mvvmfx.InjectViewModel;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
+import javafx.scene.image.ImageView;
+import javafx.util.Duration;
 
 import java.net.URL;
 import java.util.ResourceBundle;
@@ -18,6 +20,8 @@ public class ParamView implements FxmlView<ParamViewModel>, Initializable {
     @FXML
     private Label totalVehicleNumber;
 
+    @FXML
+    private ImageView infoIcon;
     @FXML
     private Label selectedVehicleClientNumber;
     @FXML
@@ -56,6 +60,9 @@ public class ParamView implements FxmlView<ParamViewModel>, Initializable {
         totalDistance.textProperty().bind(paramViewModel.totalDistance().asString());
         totalVehicleNumber.textProperty().bind(paramViewModel.totalVehicleNumber().asString());
 
+        Tooltip infoIconTooltip = new Tooltip("Passez votre souris sur un trajet du graphique");
+        infoIconTooltip.setShowDelay(Duration.millis(100));
+        Tooltip.install(infoIcon, infoIconTooltip);
         selectedVehicleClientNumber.textProperty().bind(paramViewModel.selectedVehicleClientNumber().asString());
         selectedVehicleDistance.textProperty().bind(paramViewModel.selectedVehicleDistance().asString());
         selectedVehicleCharge.textProperty().bind(paramViewModel.selectedVehicleCharge().asString());
