@@ -49,5 +49,8 @@ public class CVRPGraph {
         return routingSolution;
     }
 
-    public static void reinitializeRoutingSolution() { routingSolution.clear(); }
+    public static void reinitializeRoutingSolution() {
+        routingSolution.clear();
+        clientList.forEach(stop -> stop.setRouted(false));
+    }
 }
