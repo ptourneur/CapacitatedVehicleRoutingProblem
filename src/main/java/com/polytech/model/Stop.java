@@ -24,4 +24,30 @@ public class Stop {
     public void setRouted(boolean routed) {
         this.routed = routed;
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Stop stop = (Stop) o;
+
+        if (id != stop.id) return false;
+        if (Double.compare(stop.x, x) != 0) return false;
+        if (Double.compare(stop.y, y) != 0) return false;
+        return quantity == stop.quantity;
+    }
+
+    @Override
+    public int hashCode() {
+        int result;
+        long temp;
+        result = id;
+        temp = Double.doubleToLongBits(x);
+        result = 31 * result + (int) (temp ^ (temp >>> 32));
+        temp = Double.doubleToLongBits(y);
+        result = 31 * result + (int) (temp ^ (temp >>> 32));
+        result = 31 * result + quantity;
+        return result;
+    }
 }

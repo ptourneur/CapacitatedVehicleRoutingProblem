@@ -50,4 +50,6 @@ public final class CVRP {
                         Math.pow(finalStop.getY() - initialStop.getY(), 2)
         );
     }
+
+
 }

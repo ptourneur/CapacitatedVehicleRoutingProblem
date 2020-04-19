@@ -2,15 +2,16 @@ package com.polytech.ui;
 
 import com.polytech.model.CVRP;
 import com.polytech.model.CVRPGraph;
-import com.polytech.model.Route;
-import com.polytech.model.Step;
+import com.polytech.model.Solution;
 import de.saxsys.mvvmfx.InjectScope;
 import de.saxsys.mvvmfx.ViewModel;
-import javafx.beans.property.*;
+import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.DoubleProperty;
+import javafx.beans.property.IntegerProperty;
+import javafx.beans.property.SimpleBooleanProperty;
+import javafx.beans.property.SimpleDoubleProperty;
+import javafx.beans.property.SimpleIntegerProperty;
 import lombok.extern.slf4j.Slf4j;
-
-import java.util.Collection;
-import java.util.List;
 
 @Slf4j
 public class ParamViewModel implements ViewModel {
@@ -87,11 +88,8 @@ public class ParamViewModel implements ViewModel {
 
     private void refreshSolutionInformation() {
         totalClientNumber.setValue(CVRPGraph.getClientList().size());
-        List<Route> routingSolution = CVRPGraph.getRoutingSolution();
-        totalVehicleNumber.setValue(routingSolution.size());
-        totalDistance.setValue((double) Math.round(routingSolution.stream()
-                .map(Route::getStepList)
-                .flatMap(Collection::stream)
-                .mapToDouble(Step::getCost).sum() * 100) / 100);
+        Solution solution = CVRPGraph.getRoutingSolution();
+        totalVehicleNumber.setValue(solution.getRoutingSolution().size());
+        totalDistance.setValue((double) Math.round(solution.getFitness() * 100) / 100);
     }
 }

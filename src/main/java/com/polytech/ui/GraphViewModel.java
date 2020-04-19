@@ -42,7 +42,7 @@ public class GraphViewModel implements ViewModel {
 
         scope.subscribe("ROUTE_LOADED", (key, payload) -> {
             stepList.clear();
-            List<Route> routes = CVRPGraph.getRoutingSolution();
+            List<Route> routes = CVRPGraph.getRoutingSolution().getRoutingSolution();
             for (Route route : routes) {
                 Color color = Color.color(Math.random(), Math.random(), Math.random());
                 List<Step> steps = route.getStepList();
