@@ -88,7 +88,7 @@ public class ParamViewModel implements ViewModel {
 
     private void refreshSolutionInformation() {
         totalClientNumber.setValue(CVRPGraph.getClientList().size());
-        Solution solution = CVRPGraph.getRoutingSolution();
+        Solution solution = CVRPGraph.getBestSolution();
         totalVehicleNumber.setValue(solution.getRoutingSolution().size());
         totalDistance.setValue((double) Math.round(solution.getFitness() * 100) / 100);
     }

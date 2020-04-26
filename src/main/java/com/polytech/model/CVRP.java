@@ -32,19 +32,19 @@ public final class CVRP {
             }
 
             if (bestStop == null) {
-                currentRoute.addStep(new Step(lastStop, depot, computeCost(lastStop, depot)));
+                currentRoute.addStep(new Step(lastStop, depot));
                 currentRoute = new Route(VEHICLE_CAPACITY);
                 greedySolution.add(currentRoute);
             } else {
-                currentRoute.addStep(new Step(lastStop, bestStop, computeCost(lastStop, bestStop)));
+                currentRoute.addStep(new Step(lastStop, bestStop));
                 bestStop.setRouted(true);
             }
         }
-        currentRoute.addStep(new Step(currentRoute.getLastStop(), depot, computeCost(currentRoute.getLastStop(), depot)));
+        currentRoute.addStep(new Step(currentRoute.getLastStop(), depot));
         CVRPGraph.setRoutingSolution(greedySolution);
     }
 
-    private static double computeCost(Stop initialStop, Stop finalStop) {
+    protected static double computeCost(Stop initialStop, Stop finalStop) {
         return Math.sqrt(
                 Math.pow(finalStop.getX() - initialStop.getX(), 2) +
                         Math.pow(finalStop.getY() - initialStop.getY(), 2)

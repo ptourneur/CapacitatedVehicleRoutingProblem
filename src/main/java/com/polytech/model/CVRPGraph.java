@@ -45,11 +45,40 @@ public class CVRPGraph {
         bestSolution = new Solution(routingSolution);
     }
 
-    public static Solution getRoutingSolution() {
+    public static Solution getBestSolution() {
         return bestSolution;
     }
 
     public static void reinitializeRoutingSolution() {
         clientList.forEach(stop -> stop.setRouted(false));
+    }
+
+    public static void swapTwoStop(Stop stop1, Stop stop2) {
+        Step stepBeforeStop1 = null;
+        Step stepAfterStop1 = null;
+        Step stepBeforeStop2 = null;
+        Step stepAfterStop2 = null;
+        for (Route route : getBestSolution().getRoutingSolution()) {
+            for (Step step: route.getStepList()) {
+                if (step.getDepartureStop().equals(stop1)) {
+                    stepAfterStop1 = step;
+                }
+                if (step.getArrivalStop().equals(stop1)) {
+                    stepBeforeStop1 = step;
+                }
+                if (step.getDepartureStop().equals(stop2)) {
+                    stepAfterStop2 = step;
+                }
+                if (step.getArrivalStop().equals(stop2)) {
+                    stepBeforeStop2 = step;
+                }
+            }
+        }
+        if (stepBeforeStop1 != null && stepAfterStop1 != null && stepBeforeStop2 != null && stepAfterStop2 != null) {
+            stepBeforeStop1.setArrivalStop(stop2);
+            stepAfterStop1.setDepartureStop(stop2);
+            stepBeforeStop2.setArrivalStop(stop1);
+            stepAfterStop2.setDepartureStop(stop1);
+        }
     }
 }
