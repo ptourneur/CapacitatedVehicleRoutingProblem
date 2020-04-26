@@ -1,9 +1,12 @@
 package com.polytech.model;
 
+import com.polytech.model.exception.UndefinedStop;
 import lombok.Getter;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Optional;
 
 @Getter
 public class Route {
@@ -18,9 +21,9 @@ public class Route {
     }
 
     public boolean isComplete() {
-        Stop initialStop = getFirstStop();
-        Stop finalStop = getLastStop();
-        return (initialStop != null && finalStop != null) && initialStop.equals(finalStop);
+        Optional<Stop> initialStop = getFirstStop();
+        Optional<Stop> finalStop = getLastStop();
+        return initialStop.isPresent() && finalStop.isPresent() && initialStop.equals(finalStop);
     }
 
     public void addStep(Step step) {
@@ -32,19 +35,91 @@ public class Route {
         return stepList.stream().mapToDouble(Step::getCost).sum();
     }
 
-    public Stop getLastStop() {
+    public Optional<Stop> getLastStop() {
         try {
-            return stepList.get(stepList.size() - 1).getArrivalStop();
+            return Optional.of(stepList.get(stepList.size() - 1).getArrivalStop());
         } catch (IndexOutOfBoundsException | NullPointerException e) {
-            return null;
+            return Optional.empty();
         }
     }
 
-    public Stop getFirstStop() {
+    public Optional<Stop> getFirstStop() {
         try {
-            return stepList.get(0).getDepartureStop();
+            return Optional.of(stepList.get(0).getDepartureStop());
         } catch (IndexOutOfBoundsException | NullPointerException e) {
-            return null;
+            return Optional.empty();
         }
+    }
+
+    /**
+     * Add the stop at the best place in the route in order to minimize the cost
+     *
+     * @param newStop the Stop to add
+     */
+    public void addStop(Stop newStop) {
+        if (quantity + newStop.getQuantity() <= capacity) {
+            double minCost = Double.MAX_VALUE;
+            Step step1ToAdd = null;
+            Step step2ToAdd = null;
+            Step stepToRemove = null;
+
+            for (Step step : stepList) {
+                Step tempStep1 = new Step(step.getDepartureStop(), newStop);
+                Step tempStep2 = new Step(newStop, step.getArrivalStop());
+
+                if (tempStep1.getCost() + tempStep2.getCost() - step.getCost() < minCost) {
+                    minCost = tempStep1.getCost() + tempStep2.getCost() - step.getCost();
+                    step1ToAdd = tempStep1;
+                    step2ToAdd = tempStep2;
+                    stepToRemove = step;
+                }
+
+                tempStep1 = new Step(step.getArrivalStop(), newStop);
+                tempStep2 = new Step(newStop, step.getDepartureStop());
+
+                if (tempStep1.getCost() + tempStep2.getCost() - step.getCost() < minCost) {
+                    minCost = tempStep1.getCost() + tempStep2.getCost() - step.getCost();
+                    step1ToAdd = tempStep1;
+                    step2ToAdd = tempStep2;
+                    stepToRemove = step;
+                }
+            }
+
+            if (step1ToAdd != null) {
+                stepList.add(step1ToAdd);
+                stepList.add(step2ToAdd);
+                stepList.remove(stepToRemove);
+            }
+        }
+    }
+
+    public void removeStop(Stop stop) {
+        Stop departureStop = null;
+        Stop arrivalStop = null;
+        List<Step> stepToRemove = new ArrayList<>();
+
+        for (Step step : stepList) {
+            if (step.getArrivalStop().equals(stop)) {
+                departureStop = step.getDepartureStop();
+                stepToRemove.add(step);
+            }
+
+            if (step.getDepartureStop().equals(stop)) {
+                arrivalStop = step.getArrivalStop();
+                stepToRemove.add(step);
+            }
+        }
+
+        // TODO remove or generalize to other methods
+        if (departureStop == null || arrivalStop == null) {
+            throw new UndefinedStop("Stop was not present in the route");
+        }
+        stepList.removeAll(stepToRemove);
+        stepList.add(new Step(departureStop, arrivalStop));
+    }
+
+    public boolean containsStop(Stop stop) {
+        return stepList.stream()
+                .anyMatch(step -> step.getDepartureStop().equals(stop) || step.getArrivalStop().equals(stop));
     }
 }

@@ -19,7 +19,7 @@ public final class CVRP {
 
         while (stopList.stream().map(Stop::isRouted).anyMatch(isRouted -> !isRouted)) {
             double minCost = Double.MAX_VALUE;
-            Stop lastStop = (currentRoute.getLastStop() == null ? depot : currentRoute.getLastStop());
+            Stop lastStop = currentRoute.getLastStop().orElse(depot);
             Stop bestStop = null;
 
             for (Stop currentStop: stopList) {
@@ -40,7 +40,7 @@ public final class CVRP {
                 bestStop.setRouted(true);
             }
         }
-        currentRoute.addStep(new Step(currentRoute.getLastStop(), depot));
+        currentRoute.addStep(new Step(currentRoute.getLastStop().orElseThrow(), depot));
         CVRPGraph.setRoutingSolution(greedySolution);
     }
 
@@ -50,6 +50,4 @@ public final class CVRP {
                         Math.pow(finalStop.getY() - initialStop.getY(), 2)
         );
     }
-
-
 }
