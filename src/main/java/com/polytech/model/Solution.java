@@ -5,6 +5,7 @@ import lombok.Getter;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Getter
 public class Solution {
@@ -13,6 +14,13 @@ public class Solution {
 
     public Solution(List<Route> routingSolution) {
         this.routingSolution.addAll(routingSolution);
+    }
+
+    public Solution(Solution solution) {
+        this.routingSolution.addAll(
+                solution.getRoutingSolution().stream()
+                        .map(Route::new)
+                        .collect(Collectors.toList()));
     }
 
     public double getFitness() {

@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Getter
 public class Route {
@@ -18,6 +19,12 @@ public class Route {
     public Route(double capacity) {
         this.capacity = capacity;
         this.quantity = 0;
+    }
+
+    public Route(Route route) {
+        this.capacity = route.getCapacity();
+        this.quantity = route.getQuantity();
+        this.stepList.addAll(route.getStepList().stream().map(Step::new).collect(Collectors.toList()));
     }
 
     public boolean isComplete() {

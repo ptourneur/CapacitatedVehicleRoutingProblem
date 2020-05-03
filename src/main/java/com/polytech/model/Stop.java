@@ -21,6 +21,14 @@ public class Stop {
         this.routed = false;
     }
 
+    public Stop(Stop stop) {
+        this.id = stop.getId();
+        this.x = stop.getX();
+        this.y = stop.getY();
+        this.quantity = stop.getQuantity();
+        this.routed = stop.isRouted();
+    }
+
     public void setRouted(boolean routed) {
         this.routed = routed;
     }

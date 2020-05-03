@@ -15,6 +15,11 @@ public class Step {
         this.arrivalStop = arrivalStop;
     }
 
+    public Step(Step step) {
+        this.departureStop = new Stop(step.getDepartureStop());
+        this.arrivalStop = new Stop(step.getArrivalStop());
+    }
+
     public double getCost() {
         return CVRP.computeCost(departureStop, arrivalStop);
     }

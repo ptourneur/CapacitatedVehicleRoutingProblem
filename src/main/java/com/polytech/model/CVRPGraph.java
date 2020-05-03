@@ -52,5 +52,4 @@ public class CVRPGraph {
     public static void reinitializeRoutingSolution() {
         clientList.forEach(stop -> stop.setRouted(false));
     }
-
 }
