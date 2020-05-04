@@ -35,15 +35,20 @@ public class Solution {
         Step stepAfterStop1 = null;
         Step stepBeforeStop2 = null;
         Step stepAfterStop2 = null;
+        Route stop1Route = null;
+        Route stop2Route = null;
+
         for (Route route : routeList) {
-            for (Step step: route.getStepList()) {
+            for (Step step : route.getStepList()) {
                 if (step.getDepartureStop().equals(stop1)) {
                     stepAfterStop1 = step;
+                    stop1Route = route;
                 }
                 if (step.getArrivalStop().equals(stop1)) {
                     stepBeforeStop1 = step;
                 }
                 if (step.getDepartureStop().equals(stop2)) {
+                    stop2Route = route;
                     stepAfterStop2 = step;
                 }
                 if (step.getArrivalStop().equals(stop2)) {
@@ -51,7 +56,10 @@ public class Solution {
                 }
             }
         }
-        if (stepBeforeStop1 != null && stepAfterStop1 != null && stepBeforeStop2 != null && stepAfterStop2 != null) {
+        if (stepBeforeStop1 != null && stepAfterStop1 != null && stepBeforeStop2 != null && stepAfterStop2 != null
+                && stop1Route != null && stop1Route.getQuantity() - stop1.getQuantity() + stop2.getQuantity() <= stop1Route.getCapacity()
+                && stop2Route != null && stop2Route.getQuantity() - stop2.getQuantity() + stop1.getQuantity() <= stop2Route.getCapacity()) {
+
             stepBeforeStop1.setArrivalStop(stop2);
             stepAfterStop1.setDepartureStop(stop2);
             stepBeforeStop2.setArrivalStop(stop1);
@@ -61,7 +69,7 @@ public class Solution {
 
     public void addStopToExistingRoute(Stop newStop, Route route) {
         boolean stopWasAdded = false;
-        for (Route currentRoute: routeList) {
+        for (Route currentRoute : routeList) {
             if (currentRoute.equals(route)) {
                 stopWasAdded = currentRoute.addStop(newStop);
                 route = currentRoute; // We affect this route to route, if not the stop will be removed from this route too

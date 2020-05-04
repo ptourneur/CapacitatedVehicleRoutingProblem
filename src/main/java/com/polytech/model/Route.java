@@ -14,16 +14,13 @@ public class Route {
 
     private final List<Step> stepList = new LinkedList<>();
     private final double capacity;
-    private double quantity;
 
     public Route(double capacity) {
         this.capacity = capacity;
-        this.quantity = 0;
     }
 
     public Route(Route route) {
         this.capacity = route.getCapacity();
-        this.quantity = route.getQuantity();
         this.stepList.addAll(route.getStepList().stream().map(Step::new).collect(Collectors.toList()));
     }
 
@@ -50,11 +47,14 @@ public class Route {
 
     public void addStep(Step step) {
         stepList.add(step);
-        quantity += step.getArrivalStop().getQuantity();
     }
 
     public double getCost() {
         return stepList.stream().mapToDouble(Step::getCost).sum();
+    }
+
+    public int getQuantity() {
+        return getStopList().stream().mapToInt(Stop::getQuantity).sum();
     }
 
     public Optional<Stop> getLastStop() {
@@ -80,7 +80,7 @@ public class Route {
      * @return true if the stop was added to the route
      */
     public boolean addStop(Stop newStop) {
-        if (quantity + newStop.getQuantity() <= capacity) {
+        if (getQuantity() + newStop.getQuantity() <= capacity) {
             double minCost = Double.MAX_VALUE;
             Step step1ToAdd = null;
             Step step2ToAdd = null;
@@ -112,7 +112,6 @@ public class Route {
                 stepList.add(step1ToAdd);
                 stepList.add(step2ToAdd);
                 stepList.remove(stepToRemove);
-                quantity += newStop.getQuantity();
                 return true;
             }
         }
@@ -142,7 +141,6 @@ public class Route {
         }
         stepList.removeAll(stepToRemove);
         stepList.add(new Step(departureStop, arrivalStop));
-        quantity -= stop.getQuantity();
     }
 
     public List<Stop> getStopList() {

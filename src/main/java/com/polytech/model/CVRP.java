@@ -97,7 +97,6 @@ public final class CVRP {
                 // We initialize the temperature
                 if (temperature == null) {
                     temperature = initializeTemperature(currentSolution, neighbours);
-                    System.out.println(temperature);
                 }
 
                 int randomIndex = random.nextInt(neighbours.size());
@@ -178,17 +177,17 @@ public final class CVRP {
             }
         }
 
-//        for (Route route : solution.getRouteList()) {
-//            Solution newSolution = new Solution(solution);
-//            List<Route> routeToRemove = new ArrayList<>();
-//            for (Route route1 : newSolution.getRouteList()) {
-//                if (!routeToRemove.contains(route) && !route.equals(route1) && newSolution.mergeTwoRoute(route, route1)) {
-//                    routeToRemove.add(route);
-//                    neighbours.add(newSolution);
-//                }
-//            }
-//            routeToRemove.forEach(route1 -> newSolution.getRouteList().remove(route1));
-//        }
+        for (Route route : solution.getRouteList()) {
+            Solution newSolution = new Solution(solution);
+            List<Route> routeToRemove = new ArrayList<>();
+            for (Route route1 : newSolution.getRouteList()) {
+                if (!routeToRemove.contains(route) && !route.equals(route1) && newSolution.mergeTwoRoute(route, route1)) {
+                    routeToRemove.add(route);
+                    neighbours.add(newSolution);
+                }
+            }
+            routeToRemove.forEach(route1 -> newSolution.getRouteList().remove(route1));
+        }
 
         return neighbours;
     }
