@@ -29,12 +29,12 @@ public final class CVRP {
             Stop lastStop = currentRoute.getLastStop().orElse(depot);
             Stop bestStop = null;
 
-            for (Stop currentStop: stopList) {
+            for (Stop currentStop : stopList) {
                 if (!currentStop.isRouted() &&
-                    currentRoute.getQuantity() + currentStop.getQuantity() <= currentRoute.getCapacity() &&
-                    currentRoute.getCost() + computeCost(lastStop, currentStop) < minCost) {
-                        bestStop = currentStop;
-                        minCost = currentRoute.getCost() + computeCost(lastStop, currentStop);
+                        currentRoute.getQuantity() + currentStop.getQuantity() <= currentRoute.getCapacity() &&
+                        currentRoute.getCost() + computeCost(lastStop, currentStop) < minCost) {
+                    bestStop = currentStop;
+                    minCost = currentRoute.getCost() + computeCost(lastStop, currentStop);
                 }
             }
 
@@ -88,49 +88,35 @@ public final class CVRP {
 
         return bestSolution;
     }
-    
+
     private static List<Solution> getNeighbours(Solution solution) {
 
         List<Solution> neighbours = new ArrayList<>();
 
-        for (Route route: solution.getRoutingSolution()) {
-            for (Step step: route.getStepList()) {
+        for (Stop stop : CVRPGraph.getClientList()) {
+            for (Route route1 : solution.getRoutingSolution()) {
 
-                Stop departureStop = step.getDepartureStop();
-                Stop arrivalStop = step.getArrivalStop();
+                // We add stop to an existing route
+                Solution newSolution = new Solution(solution);
+                newSolution.addStopToExistingRoute(stop, route1);
+                neighbours.add(newSolution);
 
-                for (Route route1: solution.getRoutingSolution()) {
+                for (Step step1 : route1.getStepList()) {
 
-                    // We add stop to an existing route
-                    Solution newSolution = new Solution(solution);
-                    newSolution.addStopToExistingRoute(departureStop, route1);
-                    neighbours.add(newSolution);
+                    Stop departureStop1 = step1.getDepartureStop();
+                    Stop arrivalStop1 = step1.getArrivalStop();
 
-                    Solution newSolution1 = new Solution(solution);
-                    newSolution.addStopToExistingRoute(arrivalStop, route1);
-                    neighbours.add(newSolution1);
-
-                    for (Step step1: route1.getStepList()) {
-
-                        Stop departureStop1 = step1.getDepartureStop();
-                        Stop arrivalStop1 = step1.getArrivalStop();
-
-                        // We swap stops
+                    // We swap stops
+                    if (!departureStop1.isDepot()) {
                         Solution newSolution2 = new Solution(solution);
-                        newSolution.swapTwoStop(departureStop, departureStop1);
+                        newSolution2.swapTwoStop(stop, departureStop1);
                         neighbours.add(newSolution2);
+                    }
 
+                    if (!arrivalStop1.isDepot()) {
                         Solution newSolution3 = new Solution(solution);
-                        newSolution.swapTwoStop(departureStop, arrivalStop1);
+                        newSolution3.swapTwoStop(stop, arrivalStop1);
                         neighbours.add(newSolution3);
-
-                        Solution newSolution4 = new Solution(solution);
-                        newSolution.swapTwoStop(arrivalStop, departureStop1);
-                        neighbours.add(newSolution4);
-
-                        Solution newSolution5 = new Solution(solution);
-                        newSolution.swapTwoStop(arrivalStop, arrivalStop1);
-                        neighbours.add(newSolution5);
                     }
                 }
             }
