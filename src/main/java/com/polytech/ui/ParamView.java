@@ -75,7 +75,7 @@ public class ParamView implements FxmlView<ParamViewModel>, Initializable {
         tabuSolutionButton.setToggleGroup(radioButtonGroup);
         paramViewModel.tabuSolution().bind(tabuSolutionButton.selectedProperty());
 
-        launchButton.disableProperty().bind(paramViewModel.dataLoaded().not());
+        launchButton.disableProperty().bind(paramViewModel.dataLoaded().not().or(paramViewModel.launchCommand().runningProperty()));
 
         paramViewModel.subscribe(ParamViewModel.ERROR_ALERT, (key, payload) -> {
             String message = String.valueOf(payload[0]);
