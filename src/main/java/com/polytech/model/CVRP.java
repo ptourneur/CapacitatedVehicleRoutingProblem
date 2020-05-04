@@ -13,6 +13,33 @@ public final class CVRP {
 
     private static final double VEHICLE_CAPACITY = 100;
     private static final double SIMULATED_ANNEALING_MAX_TEMPERATURE_CHANGE = 1000;
+    private static final double SIMULATED_ANNEALING_MAX_MOVE_AT_TEMPERATURE = 10;
+
+    public static Solution randomSolution() {
+        List<Route> randomSolution = new ArrayList<>();
+
+        Stop depot = CVRPGraph.getDepot();
+
+        Route currentRoute = new Route(VEHICLE_CAPACITY);
+        randomSolution.add(currentRoute);
+
+        for (Stop stop: CVRPGraph.getClientList()) {
+            if (currentRoute.getQuantity() + stop.getQuantity() <= currentRoute.getCapacity()) {
+                currentRoute.addStep(new Step(currentRoute.getLastStop().orElse(depot), stop));
+            } else {
+                currentRoute.addStep(new Step(currentRoute.getLastStop().orElseThrow(), depot));
+                currentRoute = new Route(VEHICLE_CAPACITY);
+                currentRoute.addStep(new Step(depot, stop));
+                randomSolution.add(currentRoute);
+            }
+        }
+
+        currentRoute.addStep(new Step(currentRoute.getLastStop().orElseThrow(), depot));
+
+        Solution finalSolution = new Solution(randomSolution);
+        CVRPGraph.setRoutingSolution(finalSolution);
+        return finalSolution;
+    }
 
     public static Solution greedySolution() {
         List<Route> greedySolution = new ArrayList<>();
@@ -56,36 +83,45 @@ public final class CVRP {
 
     public static Solution simulatedAnnealing(Scope scope) {
 
-        Solution currentSolution = greedySolution();
+        Solution currentSolution = randomSolution();
         Solution bestSolution = currentSolution;
         double decreasingLaw = 0.99;
 
-
-        double temperature = -100 / Math.log(0.8);
+        Double temperature = null;
 
         for (int i = 0; i < SIMULATED_ANNEALING_MAX_TEMPERATURE_CHANGE; i++) {
-            List<Solution> neighbours = getNeighbours(currentSolution);
-            int randomIndex = random.ints(0, neighbours.size())
-                    .findAny()
-                    .orElseThrow(() -> new RandomNumberGenerationException("Can't generate random number"));
-            Solution selectedNeighbour = neighbours.get(randomIndex);
+            for (int j = 0; j < SIMULATED_ANNEALING_MAX_MOVE_AT_TEMPERATURE; j++) {
+                List<Solution> neighbours = getNeighbours(currentSolution);
+                int randomIndex = random.ints(1, 0, neighbours.size())
+                        .findAny()
+                        .orElseThrow(() -> new RandomNumberGenerationException("Can't generate random number"));
+                Solution selectedNeighbour = neighbours.get(randomIndex);
 
-            if (selectedNeighbour.getFitness() <= currentSolution.getFitness()) {
-                currentSolution = selectedNeighbour;
-                if (selectedNeighbour.getFitness() < bestSolution.getFitness()) {
-                    bestSolution = selectedNeighbour;
+                if (temperature == null) {
+                    temperature = (currentSolution.getFitness() - selectedNeighbour.getFitness()) / Math.log(0.8);
                 }
-            } else {
-                int p = random.nextInt();
-                if (p <= Math.exp(currentSolution.getFitness() - selectedNeighbour.getFitness()) / temperature) {
+
+                if (selectedNeighbour.getFitness() <= currentSolution.getFitness()) {
                     currentSolution = selectedNeighbour;
+                    if (selectedNeighbour.getFitness() < bestSolution.getFitness()) {
+                        bestSolution = selectedNeighbour;
+                    }
+                } else {
+                    double p = random.doubles(1)
+                            .findAny()
+                            .orElseThrow(() -> new RandomNumberGenerationException("Can't generate random number"));
+                    if (p <= Math.exp((currentSolution.getFitness() - selectedNeighbour.getFitness()) / temperature)) {
+                        currentSolution = selectedNeighbour;
+                    }
                 }
+                CVRPGraph.setRoutingSolution(currentSolution);
+                scope.publish("ROUTE_LOADED");
             }
-            CVRPGraph.setRoutingSolution(currentSolution);
-            scope.publish("ROUTE_LOADED");
             temperature = temperature * decreasingLaw;
         }
 
+        CVRPGraph.setRoutingSolution(bestSolution);
+        scope.publish("ROUTE_LOADED");
         return bestSolution;
     }
 

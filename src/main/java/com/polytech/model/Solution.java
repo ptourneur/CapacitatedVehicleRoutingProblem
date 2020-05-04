@@ -60,13 +60,17 @@ public class Solution {
     }
 
     public void addStopToExistingRoute(Stop newStop, Route route) {
+        boolean stopWasAdded = false;
         for (Route currentRoute: routingSolution) {
-            if (currentRoute.containsStop(newStop)) {
-                currentRoute.removeStop(newStop);
-            }
-
             if (currentRoute.equals(route)) {
-                currentRoute.addStop(newStop);
+                stopWasAdded = currentRoute.addStop(newStop);
+            }
+        }
+        if (stopWasAdded) {
+            for (Route currentRoute : routingSolution) {
+                if (currentRoute.containsStop(newStop)) {
+                    currentRoute.removeStop(newStop);
+                }
             }
         }
     }

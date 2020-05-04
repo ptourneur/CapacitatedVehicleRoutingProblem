@@ -62,8 +62,9 @@ public class Route {
      * Add the stop at the best place in the route in order to minimize the cost
      *
      * @param newStop the Stop to add
+     * @return true if the stop was added to the route
      */
-    public void addStop(Stop newStop) {
+    public boolean addStop(Stop newStop) {
         if (quantity + newStop.getQuantity() <= capacity) {
             double minCost = Double.MAX_VALUE;
             Step step1ToAdd = null;
@@ -96,8 +97,10 @@ public class Route {
                 stepList.add(step1ToAdd);
                 stepList.add(step2ToAdd);
                 stepList.remove(stepToRemove);
+                return true;
             }
         }
+        return false;
     }
 
     public void removeStop(Stop stop) {
