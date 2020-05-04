@@ -1,6 +1,5 @@
 package com.polytech.model;
 
-import com.polytech.model.exception.RandomNumberGenerationException;
 import de.saxsys.mvvmfx.Scope;
 
 import java.util.ArrayList;
@@ -12,8 +11,10 @@ public final class CVRP {
     private static final Random random = new Random();
 
     private static final double VEHICLE_CAPACITY = 100;
-    private static final double SIMULATED_ANNEALING_MAX_TEMPERATURE_CHANGE = 1000;
-    private static final double SIMULATED_ANNEALING_MAX_MOVE_AT_TEMPERATURE = 10;
+
+    private static final double SIMULATED_ANNEALING_MAX_TEMPERATURE_CHANGE = 500;
+    private static final double SIMULATED_ANNEALING_MAX_MOVE_AT_TEMPERATURE = 50;
+    private static final double SIMULATED_ANNEALING_DECREASING_LAW = 0.99;
 
     public static Solution randomSolution() {
         List<Route> randomSolution = new ArrayList<>();
@@ -23,8 +24,8 @@ public final class CVRP {
         Route currentRoute = new Route(VEHICLE_CAPACITY);
         randomSolution.add(currentRoute);
 
-        for (Stop stop: CVRPGraph.getClientList()) {
-            if (currentRoute.getQuantity() + stop.getQuantity() <= currentRoute.getCapacity()) {
+        for (Stop stop : CVRPGraph.getClientList()) {
+            if (currentRoute.getQuantity() + stop.getQuantity() <= currentRoute.getCapacity() - 30) {
                 currentRoute.addStep(new Step(currentRoute.getLastStop().orElse(depot), stop));
             } else {
                 currentRoute.addStep(new Step(currentRoute.getLastStop().orElseThrow(), depot));
@@ -85,21 +86,22 @@ public final class CVRP {
 
         Solution currentSolution = randomSolution();
         Solution bestSolution = currentSolution;
-        double decreasingLaw = 0.99;
 
         Double temperature = null;
 
         for (int i = 0; i < SIMULATED_ANNEALING_MAX_TEMPERATURE_CHANGE; i++) {
             for (int j = 0; j < SIMULATED_ANNEALING_MAX_MOVE_AT_TEMPERATURE; j++) {
-                List<Solution> neighbours = getNeighbours(currentSolution);
-                int randomIndex = random.ints(1, 0, neighbours.size())
-                        .findAny()
-                        .orElseThrow(() -> new RandomNumberGenerationException("Can't generate random number"));
-                Solution selectedNeighbour = neighbours.get(randomIndex);
 
+                List<Solution> neighbours = getNeighbours(currentSolution);
+
+                // We initialize the temperature
                 if (temperature == null) {
-                    temperature = (currentSolution.getFitness() - selectedNeighbour.getFitness()) / Math.log(0.8);
+                    temperature = initializeTemperature(currentSolution, neighbours);
+                    System.out.println(temperature);
                 }
+
+                int randomIndex = random.nextInt(neighbours.size());
+                Solution selectedNeighbour = neighbours.get(randomIndex);
 
                 if (selectedNeighbour.getFitness() <= currentSolution.getFitness()) {
                     currentSolution = selectedNeighbour;
@@ -107,9 +109,7 @@ public final class CVRP {
                         bestSolution = selectedNeighbour;
                     }
                 } else {
-                    double p = random.doubles(1)
-                            .findAny()
-                            .orElseThrow(() -> new RandomNumberGenerationException("Can't generate random number"));
+                    double p = random.nextDouble();
                     if (p <= Math.exp((currentSolution.getFitness() - selectedNeighbour.getFitness()) / temperature)) {
                         currentSolution = selectedNeighbour;
                     }
@@ -117,7 +117,7 @@ public final class CVRP {
                 CVRPGraph.setRoutingSolution(currentSolution);
                 scope.publish("ROUTE_LOADED");
             }
-            temperature = temperature * decreasingLaw;
+            temperature = temperature * SIMULATED_ANNEALING_DECREASING_LAW;
         }
 
         CVRPGraph.setRoutingSolution(bestSolution);
@@ -125,38 +125,70 @@ public final class CVRP {
         return bestSolution;
     }
 
+    /**
+     * Get 10 fitness worse that initial solution's fitness and use the average to compute initial temperature
+     *
+     * @param initialSolution
+     * @param neighbours      neighbours of the initial solution
+     * @return (initial fitness - average) / ln(0.8)
+     */
+    private static double initializeTemperature(Solution initialSolution, List<Solution> neighbours) {
+        List<Double> tenWorseFitnessThanRandomSolution = new ArrayList<>();
+
+        while (tenWorseFitnessThanRandomSolution.size() <= 10) {
+
+            int randomIndex = random.nextInt(neighbours.size());
+            Solution selectedNeighbour = neighbours.get(randomIndex);
+
+            if (selectedNeighbour.getFitness() > initialSolution.getFitness()) {
+                tenWorseFitnessThanRandomSolution.add(selectedNeighbour.getFitness());
+            }
+        }
+        double worseSolutionAverageFitness = tenWorseFitnessThanRandomSolution.stream()
+                .mapToDouble(d -> d)
+                .average()
+                .orElse(initialSolution.getFitness());
+
+        return (initialSolution.getFitness() - worseSolutionAverageFitness) / Math.log(0.8);
+    }
+
     private static List<Solution> getNeighbours(Solution solution) {
 
         List<Solution> neighbours = new ArrayList<>();
 
         for (Stop stop : CVRPGraph.getClientList()) {
-            for (Route route1 : solution.getRoutingSolution()) {
+            for (Route route : solution.getRouteList()) {
 
                 // We add stop to an existing route
-                Solution newSolution = new Solution(solution);
-                newSolution.addStopToExistingRoute(stop, route1);
-                neighbours.add(newSolution);
+                if (!route.containsStop(stop)) {
+                    Solution newSolution = new Solution(solution);
+                    newSolution.addStopToExistingRoute(stop, route);
+                    neighbours.add(newSolution);
+                }
 
-                for (Step step1 : route1.getStepList()) {
-
-                    Stop departureStop1 = step1.getDepartureStop();
-                    Stop arrivalStop1 = step1.getArrivalStop();
+                for (Stop stop1 : route.getStopList()) {
 
                     // We swap stops
-                    if (!departureStop1.isDepot()) {
-                        Solution newSolution2 = new Solution(solution);
-                        newSolution2.swapTwoStop(stop, departureStop1);
-                        neighbours.add(newSolution2);
-                    }
-
-                    if (!arrivalStop1.isDepot()) {
-                        Solution newSolution3 = new Solution(solution);
-                        newSolution3.swapTwoStop(stop, arrivalStop1);
-                        neighbours.add(newSolution3);
+                    if (!stop.equals(stop1)) {
+                        Solution newSolution1 = new Solution(solution);
+                        newSolution1.swapTwoStop(stop, stop1);
+                        neighbours.add(newSolution1);
                     }
                 }
             }
         }
+
+//        for (Route route : solution.getRouteList()) {
+//            Solution newSolution = new Solution(solution);
+//            List<Route> routeToRemove = new ArrayList<>();
+//            for (Route route1 : newSolution.getRouteList()) {
+//                if (!routeToRemove.contains(route) && !route.equals(route1) && newSolution.mergeTwoRoute(route, route1)) {
+//                    routeToRemove.add(route);
+//                    neighbours.add(newSolution);
+//                }
+//            }
+//            routeToRemove.forEach(route1 -> newSolution.getRouteList().remove(route1));
+//        }
 
         return neighbours;
     }

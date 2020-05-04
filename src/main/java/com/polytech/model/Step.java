@@ -23,4 +23,22 @@ public class Step {
     public double getCost() {
         return CVRP.computeCost(departureStop, arrivalStop);
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Step step = (Step) o;
+
+        if (!departureStop.equals(step.departureStop)) return false;
+        return arrivalStop.equals(step.arrivalStop);
+    }
+
+    @Override
+    public int hashCode() {
+        int result = departureStop.hashCode();
+        result = 31 * result + arrivalStop.hashCode();
+        return result;
+    }
 }

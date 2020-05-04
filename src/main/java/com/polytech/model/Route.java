@@ -27,6 +27,21 @@ public class Route {
         this.stepList.addAll(route.getStepList().stream().map(Step::new).collect(Collectors.toList()));
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Route route = (Route) o;
+
+        return stepList.equals(route.stepList);
+    }
+
+    @Override
+    public int hashCode() {
+        return stepList.hashCode();
+    }
+
     public boolean isComplete() {
         Optional<Stop> initialStop = getFirstStop();
         Optional<Stop> finalStop = getLastStop();
@@ -97,6 +112,7 @@ public class Route {
                 stepList.add(step1ToAdd);
                 stepList.add(step2ToAdd);
                 stepList.remove(stepToRemove);
+                quantity += newStop.getQuantity();
                 return true;
             }
         }
@@ -126,6 +142,14 @@ public class Route {
         }
         stepList.removeAll(stepToRemove);
         stepList.add(new Step(departureStop, arrivalStop));
+        quantity -= stop.getQuantity();
+    }
+
+    public List<Stop> getStopList() {
+        return stepList.stream()
+                .map(Step::getArrivalStop)
+                .filter(stop -> !stop.isDepot())
+                .collect(Collectors.toList());
     }
 
     public boolean containsStop(Stop stop) {
