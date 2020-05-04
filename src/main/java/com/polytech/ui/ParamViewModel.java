@@ -77,9 +77,15 @@ public class ParamViewModel implements ViewModel {
     public void launchSimulation() {
         try {
             CVRPGraph.reinitializeRoutingSolution();
-            CVRP.greedySolution();
-            scope.publish("ROUTE_LOADED");
-            refreshSolutionInformation();
+            if (greedySolution.get()) {
+                CVRP.greedySolution();
+                scope.publish("ROUTE_LOADED");
+                refreshSolutionInformation();
+            }
+            if (simulatedAnnealingSolution.get()) {
+                CVRP.simulatedAnnealing(scope);
+                refreshSolutionInformation();
+            }
         } catch (Exception e) {
             log.error("launchSimulation", e);
             publish(ERROR_ALERT, e.getClass().getCanonicalName());

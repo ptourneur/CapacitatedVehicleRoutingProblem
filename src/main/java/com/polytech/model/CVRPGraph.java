@@ -41,8 +41,8 @@ public class CVRPGraph {
         return depot;
     }
 
-    public static void setRoutingSolution(List<Route> routingSolution) {
-        bestSolution = new Solution(routingSolution);
+    public static void setRoutingSolution(Solution routingSolution) {
+        bestSolution = routingSolution;
     }
 
     public static Solution getBestSolution() {

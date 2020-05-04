@@ -59,7 +59,7 @@ public class Solution {
         }
     }
 
-    public void addNodeToExistingRoute(Stop newStop, Route route) {
+    public void addStopToExistingRoute(Stop newStop, Route route) {
         for (Route currentRoute: routingSolution) {
             if (currentRoute.containsStop(newStop)) {
                 currentRoute.removeStop(newStop);

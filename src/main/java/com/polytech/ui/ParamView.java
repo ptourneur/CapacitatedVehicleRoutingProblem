@@ -31,7 +31,7 @@ public class ParamView implements FxmlView<ParamViewModel>, Initializable {
     @FXML
     private Label selectedVehicleCapacity;
 
-    private ToggleGroup radioButtonGroup = new ToggleGroup();
+    private final ToggleGroup radioButtonGroup = new ToggleGroup();
     @FXML
     private RadioButton greedySolutionButton;
     @FXML
