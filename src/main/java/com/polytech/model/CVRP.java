@@ -161,8 +161,9 @@ public final class CVRP {
                 // We add stop to an existing route
                 if (!route.containsStop(stop)) {
                     Solution newSolution = new Solution(solution);
-                    newSolution.addStopToExistingRoute(stop, route);
-                    neighbours.add(newSolution);
+                    if (newSolution.addStopToExistingRoute(stop, route)) {
+                        neighbours.add(newSolution);
+                    }
                 }
 
                 for (Stop stop1 : route.getStopList()) {
@@ -170,8 +171,9 @@ public final class CVRP {
                     // We swap stops
                     if (!stop.equals(stop1)) {
                         Solution newSolution1 = new Solution(solution);
-                        newSolution1.swapTwoStop(stop, stop1);
-                        neighbours.add(newSolution1);
+                        if (newSolution1.swapTwoStop(stop, stop1)) {
+                            neighbours.add(newSolution1);
+                        }
                     }
                 }
             }

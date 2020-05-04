@@ -30,7 +30,7 @@ public class Solution {
                 .mapToDouble(Step::getCost).sum();
     }
 
-    public void swapTwoStop(Stop stop1, Stop stop2) {
+    public boolean swapTwoStop(Stop stop1, Stop stop2) {
         Step stepBeforeStop1 = null;
         Step stepAfterStop1 = null;
         Step stepBeforeStop2 = null;
@@ -64,10 +64,12 @@ public class Solution {
             stepAfterStop1.setDepartureStop(stop2);
             stepBeforeStop2.setArrivalStop(stop1);
             stepAfterStop2.setDepartureStop(stop1);
+            return true;
         }
+        return false;
     }
 
-    public void addStopToExistingRoute(Stop newStop, Route route) {
+    public boolean addStopToExistingRoute(Stop newStop, Route route) {
         boolean stopWasAdded = false;
         for (Route currentRoute : routeList) {
             if (currentRoute.equals(route)) {
@@ -79,9 +81,11 @@ public class Solution {
             for (Route currentRoute : routeList) {
                 if (currentRoute.containsStop(newStop) && !currentRoute.equals(route)) {
                     currentRoute.removeStop(newStop);
+                    return true;
                 }
             }
         }
+        return false;
     }
 
     /**
