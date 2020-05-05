@@ -179,16 +179,16 @@ public final class CVRP {
             }
         }
 
+        // We merge two routes
         for (Route route : solution.getRouteList()) {
-            Solution newSolution = new Solution(solution);
-            List<Route> routeToRemove = new ArrayList<>();
-            for (Route route1 : newSolution.getRouteList()) {
-                if (!routeToRemove.contains(route) && !route.equals(route1) && newSolution.mergeTwoRoute(route, route1)) {
-                    routeToRemove.add(route);
-                    neighbours.add(newSolution);
+            for (Route route1 : solution.getRouteList()) {
+                if (!route.equals(route1)) {
+                    Solution newSolution = new Solution(solution);
+                    if (newSolution.mergeTwoRoute(route, route1)) {
+                        neighbours.add(newSolution);
+                    }
                 }
             }
-            routeToRemove.forEach(route1 -> newSolution.getRouteList().remove(route1));
         }
 
         return neighbours;

@@ -69,6 +69,12 @@ public class Solution {
         return false;
     }
 
+    /**
+     *
+     * @param newStop
+     * @param route
+     * @return
+     */
     public boolean addStopToExistingRoute(Stop newStop, Route route) {
         boolean stopWasAdded = false;
         for (Route currentRoute : routeList) {
@@ -89,15 +95,25 @@ public class Solution {
     }
 
     /**
-     * Merge route1 into route2 if possible
+     * Merge route1 into route2 if possible and remove route1 from the solution
+     * All route we be added in order to minimize the fitness
      *
-     * @param route1
-     * @param route2
+     * @param route1 the route you want to merge
+     * @param route2 the route where you want to merge
+     * @return true if route1 was merged into route2
      */
     public boolean mergeTwoRoute(Route route1, Route route2) {
         if (route1.getQuantity() + route2.getQuantity() <= route2.getCapacity()) {
+
             List<Stop> stopList = route1.getStopList();
-            stopList.forEach(route2::addStop);
+
+            for (Route route : routeList) {
+                if (route.equals(route2)) {
+                    stopList.forEach(route::addStop);
+                }
+            }
+
+            routeList.remove(route1);
             return true;
         }
         return false;
