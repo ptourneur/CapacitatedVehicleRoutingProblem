@@ -16,6 +16,11 @@ public final class CVRP {
     private static final double SIMULATED_ANNEALING_MAX_MOVE_AT_TEMPERATURE = 50;
     private static final double SIMULATED_ANNEALING_DECREASING_LAW = 0.99;
 
+    /**
+     * Takes stops and inserts them into a route. When it is full, closes it and inserts into another one
+     *
+     * @return generated solution
+     */
     public static Solution randomSolution() {
         List<Route> randomSolution = new ArrayList<>();
 
@@ -25,7 +30,7 @@ public final class CVRP {
         randomSolution.add(currentRoute);
 
         for (Stop stop : CVRPGraph.getClientList()) {
-            if (currentRoute.getQuantity() + stop.getQuantity() <= currentRoute.getCapacity() - 30) {
+            if (currentRoute.getQuantity() + stop.getQuantity() <= currentRoute.getCapacity()) {
                 currentRoute.addStep(new Step(currentRoute.getLastStop().orElse(depot), stop));
             } else {
                 currentRoute.addStep(new Step(currentRoute.getLastStop().orElseThrow(), depot));
@@ -42,6 +47,11 @@ public final class CVRP {
         return finalSolution;
     }
 
+    /**
+     * Inserts in each route the best stop in order to minimize the cost
+     *
+     * @return generated solution
+     */
     public static Solution greedySolution() {
         List<Route> greedySolution = new ArrayList<>();
 
@@ -82,6 +92,14 @@ public final class CVRP {
         return finalSolution;
     }
 
+    /**
+     * Simulated annealing implementation
+     * - The initial solution is given by {@code randomSolution()}
+     * - The initial temperature is given by {@code initializeTemperature()}
+     *
+     * @param scope the scope we have to notify to update the view
+     * @return generated solution
+     */
     public static Solution simulatedAnnealing(Scope scope) {
 
         Solution currentSolution = randomSolution();
@@ -125,10 +143,10 @@ public final class CVRP {
     }
 
     /**
-     * Get 10 fitness worse that initial solution's fitness and use the average to compute initial temperature
+     * Gets 10 fitness worse that initial solution's fitness and use the average to compute initial temperature
      *
-     * @param initialSolution
-     * @param neighbours      neighbours of the initial solution
+     * @param initialSolution the initial solution
+     * @param neighbours neighbours of the initial solution
      * @return (initial fitness - average) / ln(0.8)
      */
     private static double initializeTemperature(Solution initialSolution, List<Solution> neighbours) {
@@ -151,6 +169,13 @@ public final class CVRP {
         return (initialSolution.getFitness() - worseSolutionAverageFitness) / Math.log(0.8);
     }
 
+    /**
+     * Generates neighbors from three elementary transformations available in {@code Solution} : {@code swapTwoStops()},
+     * {@code addStopToExistingRoute()} and {@code mergeTwoRoutes()}
+     *
+     * @param solution the solution from which we will generate the neighbors
+     * @return the neighbors in list of solution
+     */
     private static List<Solution> getNeighbours(Solution solution) {
 
         List<Solution> neighbours = new ArrayList<>();
@@ -171,7 +196,7 @@ public final class CVRP {
                     // We swap stops
                     if (!stop.equals(stop1)) {
                         Solution newSolution1 = new Solution(solution);
-                        if (newSolution1.swapTwoStop(stop, stop1)) {
+                        if (newSolution1.swapTwoStops(stop, stop1)) {
                             neighbours.add(newSolution1);
                         }
                     }
@@ -184,7 +209,7 @@ public final class CVRP {
             for (Route route1 : solution.getRouteList()) {
                 if (!route.equals(route1)) {
                     Solution newSolution = new Solution(solution);
-                    if (newSolution.mergeTwoRoute(route, route1)) {
+                    if (newSolution.mergeTwoRoutes(route, route1)) {
                         neighbours.add(newSolution);
                     }
                 }
@@ -194,7 +219,14 @@ public final class CVRP {
         return neighbours;
     }
 
-    protected static double computeCost(Stop initialStop, Stop finalStop) {
+    /**
+     * Computes the Euclidean distance between two stops
+     *
+     * @param initialStop the first stop
+     * @param finalStop the second stop
+     * @return the distance between them
+     */
+    static double computeCost(Stop initialStop, Stop finalStop) {
         return Math.sqrt(
                 Math.pow(finalStop.getX() - initialStop.getX(), 2) +
                         Math.pow(finalStop.getY() - initialStop.getY(), 2)

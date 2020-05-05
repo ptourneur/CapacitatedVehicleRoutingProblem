@@ -30,7 +30,14 @@ public class Solution {
                 .mapToDouble(Step::getCost).sum();
     }
 
-    public boolean swapTwoStop(Stop stop1, Stop stop2) {
+    /**
+     * Swaps two stops (from same route or different one) if it is possible
+     *
+     * @param stop1 first stop to switch
+     * @param stop2 second stop to switch
+     * @return true if stops were swapped
+     */
+    public boolean swapTwoStops(Stop stop1, Stop stop2) {
         Step stepBeforeStop1 = null;
         Step stepAfterStop1 = null;
         Step stepBeforeStop2 = null;
@@ -70,13 +77,18 @@ public class Solution {
     }
 
     /**
+     * Inserts the stop to its new route if it is possible,
+     * delete it from its old one and delete its old route if it was the only stop inside
      *
-     * @param newStop
-     * @param route
-     * @return
+     * @param newStop the stop to add
+     * @param route the route which wil
+     * @return true if the node was added
      */
     public boolean addStopToExistingRoute(Stop newStop, Route route) {
+
         boolean stopWasAdded = false;
+        Route newStopOldRoute = null;
+
         for (Route currentRoute : routeList) {
             if (currentRoute.equals(route)) {
                 stopWasAdded = currentRoute.addStop(newStop);
@@ -87,22 +99,27 @@ public class Solution {
             for (Route currentRoute : routeList) {
                 if (currentRoute.containsStop(newStop) && !currentRoute.equals(route)) {
                     currentRoute.removeStop(newStop);
-                    return true;
+                    newStopOldRoute = currentRoute; // We save the route to delete it after if it is empty
                 }
             }
+
+            if (newStopOldRoute != null && newStopOldRoute.getStopList().isEmpty()) {
+                routeList.remove(newStopOldRoute);
+            }
+            return true;
         }
         return false;
     }
 
     /**
-     * Merge route1 into route2 if possible and remove route1 from the solution
+     * Merges route1 into route2 if possible and remove route1 from the solution
      * All route we be added in order to minimize the fitness
      *
      * @param route1 the route you want to merge
      * @param route2 the route where you want to merge
      * @return true if route1 was merged into route2
      */
-    public boolean mergeTwoRoute(Route route1, Route route2) {
+    public boolean mergeTwoRoutes(Route route1, Route route2) {
         if (route1.getQuantity() + route2.getQuantity() <= route2.getCapacity()) {
 
             List<Stop> stopList = route1.getStopList();
