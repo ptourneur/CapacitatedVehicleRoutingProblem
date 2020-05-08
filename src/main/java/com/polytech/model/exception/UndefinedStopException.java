@@ -1,6 +1,6 @@
 package com.polytech.model.exception;
 
-public class UndefinedStop extends RuntimeException {
+public class UndefinedStopException extends RuntimeException {
 
     /**
      * Constructs a new runtime exception with the specified detail message.
@@ -10,7 +10,7 @@ public class UndefinedStop extends RuntimeException {
      * @param message the detail message. The detail message is saved for
      *                later retrieval by the {@link #getMessage()} method.
      */
-    public UndefinedStop(String message) {
+    public UndefinedStopException(String message) {
         super(message);
     }
 }

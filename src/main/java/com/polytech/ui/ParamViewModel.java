@@ -27,7 +27,8 @@ public class ParamViewModel implements ViewModel {
 
     private final Command greedyCommand = new DelegateCommand(this::greedyAction, true);
     private final Command simulatedAnnealingCommand = new DelegateCommand(this::simulatedAnnealingAction, true);
-    private final Command launchCommand = new CompositeCommand(greedyCommand, simulatedAnnealingCommand);
+    private final Command tabuSearchCommand = new DelegateCommand(this::tabuSearchAction, true);
+    private final Command launchCommand = new CompositeCommand(greedyCommand, simulatedAnnealingCommand, tabuSearchCommand);
 
     private final IntegerProperty totalClientNumber = new SimpleIntegerProperty(0);
     private final DoubleProperty totalDistance = new SimpleDoubleProperty(0.0);
@@ -80,7 +81,7 @@ public class ParamViewModel implements ViewModel {
     public void loadData() {
         try {
             CVRPGraph.reinitializeRoutingSolution();
-            CVRPGraph.loadDataFile("src/main/resources/data/A3405.txt");
+            CVRPGraph.loadDataFile("src/main/resources/data/A3205.txt");
             scope.publish("STOP_LOADED");
             refreshSolutionInformation();
             launchButtonDisable.setValue(!CVRPGraph.getClientList().isEmpty());
@@ -98,6 +99,9 @@ public class ParamViewModel implements ViewModel {
             }
             if (simulatedAnnealingSolution.get()) {
                 simulatedAnnealingCommand.execute();
+            }
+            if (tabuSolution.get()) {
+                tabuSearchCommand.execute();
             }
         } catch (Exception e) {
             log.error("launchSimulation", e);
@@ -127,6 +131,15 @@ public class ParamViewModel implements ViewModel {
             @Override
             protected void action() {
                 CVRP.simulatedAnnealing(scope);
+            }
+        };
+    }
+
+    private Action tabuSearchAction() {
+        return new Action() {
+            @Override
+            protected void action() {
+                CVRP.tabuSearch(scope);
             }
         };
     }

@@ -1,6 +1,6 @@
 package com.polytech.model;
 
-import com.polytech.model.exception.UndefinedStop;
+import com.polytech.model.exception.UndefinedStopException;
 import lombok.Getter;
 
 import java.util.ArrayList;
@@ -31,7 +31,7 @@ public class Route {
 
         Route route = (Route) o;
 
-        return stepList.equals(route.stepList);
+        return getCost() == route.getCost();
     }
 
     @Override
@@ -135,9 +135,8 @@ public class Route {
             }
         }
 
-        // TODO remove or generalize to other methods
         if (departureStop == null || arrivalStop == null) {
-            throw new UndefinedStop("Stop was not present in the route");
+            throw new UndefinedStopException("Stop was not present in the route");
         }
         stepList.removeAll(stepToRemove);
         stepList.add(new Step(departureStop, arrivalStop));

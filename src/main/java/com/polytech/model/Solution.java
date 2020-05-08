@@ -30,6 +30,21 @@ public class Solution {
                 .mapToDouble(Step::getCost).sum();
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Solution solution = (Solution) o;
+
+        return getFitness() == solution.getFitness();
+    }
+
+    @Override
+    public int hashCode() {
+        return routeList.hashCode();
+    }
+
     /**
      * Swaps two stops (from same route or different one) if it is possible
      *
@@ -38,6 +53,7 @@ public class Solution {
      * @return true if stops were swapped
      */
     public boolean swapTwoStops(Stop stop1, Stop stop2) {
+
         Step stepBeforeStop1 = null;
         Step stepAfterStop1 = null;
         Step stepBeforeStop2 = null;

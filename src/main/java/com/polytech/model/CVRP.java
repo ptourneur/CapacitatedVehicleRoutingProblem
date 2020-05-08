@@ -1,8 +1,11 @@
 package com.polytech.model;
 
+import com.polytech.model.exception.NoNeighborException;
 import de.saxsys.mvvmfx.Scope;
 
 import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Random;
 
@@ -12,9 +15,12 @@ public final class CVRP {
 
     private static final double VEHICLE_CAPACITY = 100;
 
-    private static final double SIMULATED_ANNEALING_MAX_TEMPERATURE_CHANGE = 500;
-    private static final double SIMULATED_ANNEALING_MAX_MOVE_AT_TEMPERATURE = 50;
+    private static final int SIMULATED_ANNEALING_MAX_TEMPERATURE_CHANGE = 500;
+    private static final int SIMULATED_ANNEALING_MAX_MOVE_AT_TEMPERATURE = 50;
     private static final double SIMULATED_ANNEALING_DECREASING_LAW = 0.99;
+
+    private static final int TABU_LIST_SIZE = 500;
+    private static final int TABU_LIST_MAX_ITERATION = 10000;
 
     /**
      * Takes stops and inserts them into a route. When it is full, closes it and inserts into another one
@@ -110,7 +116,7 @@ public final class CVRP {
         for (int i = 0; i < SIMULATED_ANNEALING_MAX_TEMPERATURE_CHANGE; i++) {
             for (int j = 0; j < SIMULATED_ANNEALING_MAX_MOVE_AT_TEMPERATURE; j++) {
 
-                List<Solution> neighbours = getNeighbours(currentSolution);
+                List<Solution> neighbours = getNeighbors(currentSolution);
 
                 // We initialize the temperature
                 if (temperature == null) {
@@ -146,7 +152,7 @@ public final class CVRP {
      * Gets 10 fitness worse that initial solution's fitness and use the average to compute initial temperature
      *
      * @param initialSolution the initial solution
-     * @param neighbours neighbours of the initial solution
+     * @param neighbours      neighbours of the initial solution
      * @return (initial fitness - average) / ln(0.8)
      */
     private static double initializeTemperature(Solution initialSolution, List<Solution> neighbours) {
@@ -170,15 +176,59 @@ public final class CVRP {
     }
 
     /**
+     * Tabu search implementation
+     * - The initial solution is given by {@code randomSolution()}
+     * - The initial temperature is given by {@code initializeTemperature()}
+     *
+     * @param scope the scope we have to notify to update the view
+     * @return generated solution
+     */
+    public static Solution tabuSearch(Scope scope) {
+
+        Solution currentSolution = randomSolution();
+        Solution bestSolution = currentSolution;
+
+        LinkedList<Double> tabuList = new LinkedList<>();
+        tabuList.add(currentSolution.getFitness());
+
+        for (int i = 0; i < TABU_LIST_MAX_ITERATION; i++) {
+
+            Solution bestNeighbor = getNeighbors(currentSolution).stream()
+                    .filter(neighbor -> !tabuList.contains(neighbor.getFitness()))
+                    .min(Comparator.comparingDouble(Solution::getFitness))
+                    .orElseThrow(() -> new NoNeighborException("Can't find any neighbor"));
+
+            if (bestNeighbor.getFitness() >= currentSolution.getFitness()) {
+                tabuList.addLast(currentSolution.getFitness());
+                if (tabuList.size() > TABU_LIST_SIZE) {
+                    tabuList.removeFirst();
+                }
+            }
+
+            currentSolution = bestNeighbor;
+            if (currentSolution.getFitness() < bestSolution.getFitness()) {
+                bestSolution = currentSolution;
+            }
+
+            CVRPGraph.setRoutingSolution(currentSolution);
+            scope.publish("ROUTE_LOADED");
+        }
+
+        CVRPGraph.setRoutingSolution(bestSolution);
+        scope.publish("ROUTE_LOADED");
+        return bestSolution;
+    }
+
+    /**
      * Generates neighbors from three elementary transformations available in {@code Solution} : {@code swapTwoStops()},
      * {@code addStopToExistingRoute()} and {@code mergeTwoRoutes()}
      *
      * @param solution the solution from which we will generate the neighbors
      * @return the neighbors in list of solution
      */
-    private static List<Solution> getNeighbours(Solution solution) {
+    private static List<Solution> getNeighbors(Solution solution) {
 
-        List<Solution> neighbours = new ArrayList<>();
+        List<Solution> neighbors = new ArrayList<>();
 
         for (Stop stop : CVRPGraph.getClientList()) {
             for (Route route : solution.getRouteList()) {
@@ -187,7 +237,7 @@ public final class CVRP {
                 if (!route.containsStop(stop)) {
                     Solution newSolution = new Solution(solution);
                     if (newSolution.addStopToExistingRoute(stop, route)) {
-                        neighbours.add(newSolution);
+                        neighbors.add(newSolution);
                     }
                 }
 
@@ -197,7 +247,7 @@ public final class CVRP {
                     if (!stop.equals(stop1)) {
                         Solution newSolution1 = new Solution(solution);
                         if (newSolution1.swapTwoStops(stop, stop1)) {
-                            neighbours.add(newSolution1);
+                            neighbors.add(newSolution1);
                         }
                     }
                 }
@@ -210,20 +260,20 @@ public final class CVRP {
                 if (!route.equals(route1)) {
                     Solution newSolution = new Solution(solution);
                     if (newSolution.mergeTwoRoutes(route, route1)) {
-                        neighbours.add(newSolution);
+                        neighbors.add(newSolution);
                     }
                 }
             }
         }
 
-        return neighbours;
+        return neighbors;
     }
 
     /**
      * Computes the Euclidean distance between two stops
      *
      * @param initialStop the first stop
-     * @param finalStop the second stop
+     * @param finalStop   the second stop
      * @return the distance between them
      */
     static double computeCost(Stop initialStop, Stop finalStop) {
