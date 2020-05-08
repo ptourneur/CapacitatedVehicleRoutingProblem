@@ -3,6 +3,7 @@ package com.polytech.model;
 import com.polytech.model.exception.NoNeighborException;
 import com.polytech.ui.CustomerScope;
 
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.LinkedList;
@@ -15,9 +16,10 @@ public final class CVRP {
 
     private static final double VEHICLE_CAPACITY = 100;
 
-    private static final int SIMULATED_ANNEALING_MAX_TEMPERATURE_CHANGE = 500;
-    private static final int SIMULATED_ANNEALING_MAX_MOVE_AT_TEMPERATURE = 50;
-    private static final double SIMULATED_ANNEALING_DECREASING_LAW = 0.99;
+    private static final int SIMULATED_ANNEALING_MAX_TEMPERATURE_CHANGE = 400;
+    private static final int SIMULATED_ANNEALING_MAX_MOVE_AT_TEMPERATURE = 300;
+    private static final double SIMULATED_ANNEALING_START_DECREASING_LAW = 0.95;
+    private static final double SIMULATED_ANNEALING_END_DECREASING_LAW = 0.99;
 
     private static final int TABU_LIST_SIZE = 500;
     private static final int TABU_LIST_MAX_ITERATION = 10000;
@@ -110,8 +112,10 @@ public final class CVRP {
      */
     public static Solution simulatedAnnealing(CustomerScope scope) {
 
+        long start = Instant.now().getEpochSecond();
         Solution currentSolution = randomSolution();
         Solution bestSolution = currentSolution;
+        double mu = SIMULATED_ANNEALING_START_DECREASING_LAW;
 
         scope.totalIteration().setValue(SIMULATED_ANNEALING_MAX_TEMPERATURE_CHANGE);
 
@@ -145,12 +149,18 @@ public final class CVRP {
                 scope.currentIteration().setValue(i+1);
                 scope.publish("ROUTE_LOADED");
             }
-            temperature = temperature * SIMULATED_ANNEALING_DECREASING_LAW;
+            temperature = temperature * mu;
+            if (mu < SIMULATED_ANNEALING_END_DECREASING_LAW) {
+                mu = mu + 0.001;
+            }
+            System.out.println(i);
         }
 
         CVRPGraph.setRoutingSolution(bestSolution);
         scope.currentIteration().setValue(0);
         scope.publish("ROUTE_LOADED");
+
+        System.out.println(Instant.ofEpochSecond(Instant.now().getEpochSecond() - start));
         return bestSolution;
     }
 
