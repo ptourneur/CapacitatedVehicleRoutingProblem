@@ -93,7 +93,7 @@ public class GraphViewModel implements ViewModel {
         labelGroup.setVisible(true);
         scope.selectedVehicleClientNumber().setValue(selectedRoute.getStepList().size() - 1);
         scope.selectedVehicleDistance().setValue((double) Math.round(selectedRoute.getCost() * 10) / 10);
-        scope.selectedVehicleCharge().setValue((double) Math.round(selectedRoute.getQuantity() * 10) / 10);
+        scope.selectedVehicleCharge().setValue((double) selectedRoute.getQuantity() * 10 / 10);
         scope.selectedVehicleCapacity().setValue((double) Math.round(selectedRoute.getCapacity() * 10) / 10);
     }
 
@@ -106,6 +106,6 @@ public class GraphViewModel implements ViewModel {
     }
 
     private double toUiUnit(double coordinate) {
-        return (coordinate * UI_UNIT) + UI_UNIT;
+        return coordinate * UI_UNIT;
     }
 }

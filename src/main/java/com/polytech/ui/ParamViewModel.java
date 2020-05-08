@@ -15,7 +15,19 @@ import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.beans.property.SimpleIntegerProperty;
+import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.property.StringProperty;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import lombok.extern.slf4j.Slf4j;
+
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Slf4j
 public class ParamViewModel implements ViewModel {
@@ -33,6 +45,9 @@ public class ParamViewModel implements ViewModel {
     private final IntegerProperty totalClientNumber = new SimpleIntegerProperty(0);
     private final DoubleProperty totalDistance = new SimpleDoubleProperty(0.0);
     private final IntegerProperty totalVehicleNumber = new SimpleIntegerProperty(0);
+
+    private final ObservableList<String> fileList = FXCollections.observableArrayList();
+    private final StringProperty selectedFile = new SimpleStringProperty();
 
     private final BooleanProperty greedySolution = new SimpleBooleanProperty();
     private final BooleanProperty simulatedAnnealingSolution = new SimpleBooleanProperty();
@@ -67,6 +82,10 @@ public class ParamViewModel implements ViewModel {
 
     public DoubleProperty selectedVehicleCapacity() { return scope.selectedVehicleCapacity(); }
 
+    public ObservableList<String> fileList() { return fileList; }
+
+    public StringProperty selectedFile() { return selectedFile; }
+
     public BooleanProperty greedySolution() { return greedySolution; }
 
     public BooleanProperty simulatedAnnealingSolution() { return simulatedAnnealingSolution; }
@@ -83,12 +102,23 @@ public class ParamViewModel implements ViewModel {
 
     public void initialize() {
         scope.subscribe("ROUTE_LOADED", (key, payload) -> refreshSolutionInformation());
+        try (Stream<Path> walk = Files.walk(Paths.get("src/main/resources/data"))) {
+
+            List<String> result = walk.filter(Files::isRegularFile)
+                    .map(path -> path.getFileName().toString()).collect(Collectors.toList());
+
+            fileList.addAll(result);
+
+        } catch (IOException e) {
+            log.error("loadFiles", e);
+            publish(ERROR_ALERT, e.getClass().getCanonicalName());
+        }
     }
 
     public void loadData() {
         try {
             CVRPGraph.reinitializeRoutingSolution();
-            CVRPGraph.loadDataFile("src/main/resources/data/A3205.txt");
+            CVRPGraph.loadDataFile("src/main/resources/data/" + selectedFile.get());
             scope.publish("STOP_LOADED");
             refreshSolutionInformation();
             launchButtonDisable.setValue(!CVRPGraph.getClientList().isEmpty());

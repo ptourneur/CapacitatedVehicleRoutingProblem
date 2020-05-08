@@ -155,7 +155,7 @@ public final class CVRP {
     }
 
     /**
-     * Gets 10 fitness worse that initial solution's fitness and use the average to compute initial temperature
+     * Gets 20 fitness worse that initial solution's fitness and use the average to compute initial temperature
      *
      * @param initialSolution the initial solution
      * @param neighbours      neighbours of the initial solution
@@ -164,7 +164,7 @@ public final class CVRP {
     private static double initializeTemperature(Solution initialSolution, List<Solution> neighbours) {
         List<Double> tenWorseFitnessThanRandomSolution = new ArrayList<>();
 
-        while (tenWorseFitnessThanRandomSolution.size() <= 10) {
+        while (tenWorseFitnessThanRandomSolution.size() <= 20) {
 
             int randomIndex = random.nextInt(neighbours.size());
             Solution selectedNeighbour = neighbours.get(randomIndex);

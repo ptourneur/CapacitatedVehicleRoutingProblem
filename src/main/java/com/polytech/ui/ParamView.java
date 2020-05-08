@@ -4,7 +4,14 @@ import de.saxsys.mvvmfx.FxmlView;
 import de.saxsys.mvvmfx.InjectViewModel;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.control.*;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.control.ListView;
+import javafx.scene.control.ProgressBar;
+import javafx.scene.control.RadioButton;
+import javafx.scene.control.ToggleGroup;
+import javafx.scene.control.Tooltip;
 import javafx.scene.image.ImageView;
 import javafx.util.Duration;
 
@@ -30,6 +37,9 @@ public class ParamView implements FxmlView<ParamViewModel>, Initializable {
     private Label selectedVehicleCharge;
     @FXML
     private Label selectedVehicleCapacity;
+
+    @FXML
+    private ListView<String> fileListView;
 
     private final ToggleGroup radioButtonGroup = new ToggleGroup();
     @FXML
@@ -70,6 +80,10 @@ public class ParamView implements FxmlView<ParamViewModel>, Initializable {
         selectedVehicleDistance.textProperty().bind(paramViewModel.selectedVehicleDistance().asString());
         selectedVehicleCharge.textProperty().bind(paramViewModel.selectedVehicleCharge().asString());
         selectedVehicleCapacity.textProperty().bind(paramViewModel.selectedVehicleCapacity().asString());
+
+        fileListView.setItems(paramViewModel.fileList());
+        paramViewModel.selectedFile().bind(fileListView.getSelectionModel().selectedItemProperty());
+        fileListView.getSelectionModel().select(0);
 
         greedySolutionButton.setToggleGroup(radioButtonGroup);
         paramViewModel.greedySolution().bind(greedySolutionButton.selectedProperty());

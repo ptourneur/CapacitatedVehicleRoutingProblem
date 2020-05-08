@@ -82,11 +82,11 @@
                                 </font>
                             </Label>
 
-                                <ImageView fx:id="infoIcon">
-                                    <image>
-                                        <Image preserveRatio="true" requestedWidth="18" url="@../../../img/info_icon.png"/>
-                                    </image>
-                                </ImageView>
+                            <ImageView fx:id="infoIcon">
+                                <image>
+                                    <Image preserveRatio="true" requestedWidth="18" url="@../../../img/info_icon.png"/>
+                                </image>
+                            </ImageView>
                         </HBox>
                         <VBox>
                             <HBox spacing="8">
@@ -146,9 +146,21 @@
             <center>
                 <VBox spacing="40" alignment="BOTTOM_CENTER">
                     <padding>
-                        <Insets top="15" right="10" bottom="10" left="10"/>
+                        <Insets top="60" right="10" bottom="10" left="10"/>
                     </padding>
-
+                    <HBox spacing="10">
+                        <Label text="Choisissez un fichier :">
+                            <font>
+                                <Font size="14.0"/>
+                            </font>
+                        </Label>
+                        <VBox spacing="10">
+                            <padding>
+                                <Insets left="25"/>
+                            </padding>
+                            <ListView fx:id="fileListView" style="-fx-focus-color: transparent;"/>
+                        </VBox>
+                    </HBox>
                     <HBox spacing="10">
                         <Label text="Choisissez un algorithme :">
                             <font>
