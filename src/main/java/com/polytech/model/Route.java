@@ -31,7 +31,7 @@ public class Route {
 
         Route route = (Route) o;
 
-        return getCost() == route.getCost();
+        return stepList.equals(route.getStepList());
     }
 
     @Override

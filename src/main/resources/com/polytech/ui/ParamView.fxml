@@ -146,7 +146,7 @@
             <center>
                 <VBox spacing="40" alignment="BOTTOM_CENTER">
                     <padding>
-                        <Insets top="15" right="10" bottom="50" left="10"/>
+                        <Insets top="15" right="10" bottom="10" left="10"/>
                     </padding>
 
                     <HBox spacing="10">
@@ -172,15 +172,18 @@
                                 </font>
                             </RadioButton>
                         </VBox>
+                    </HBox>
 
+                    <HBox spacing="15">
+                        <Button prefHeight="27.0" prefWidth="159.0" text="Charger les données" onAction="#loadData"/>
+                        <Button fx:id="launchButton" prefHeight="27.0" prefWidth="149.0" text="Lancer la simulation"
+                                onAction="#launchSimulation"/>
                     </HBox>
                 </VBox>
             </center>
             <bottom>
-                <HBox spacing="15">
-                    <Button prefHeight="27.0" prefWidth="159.0" text="Charger les données" onAction="#loadData"/>
-                    <Button fx:id="launchButton" prefHeight="27.0" prefWidth="149.0" text="Lancer la simulation"
-                            onAction="#launchSimulation"/>
+                <HBox alignment="CENTER">
+                    <ProgressBar fx:id="progressBar" prefWidth="460"/>
                 </HBox>
             </bottom>
         </BorderPane>

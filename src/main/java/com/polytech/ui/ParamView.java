@@ -43,6 +43,9 @@ public class ParamView implements FxmlView<ParamViewModel>, Initializable {
     private Button launchButton;
 
     @FXML
+    private ProgressBar progressBar;
+
+    @FXML
     public void loadData() {
         paramViewModel.loadData();
     }
@@ -76,6 +79,9 @@ public class ParamView implements FxmlView<ParamViewModel>, Initializable {
         paramViewModel.tabuSolution().bind(tabuSolutionButton.selectedProperty());
 
         launchButton.disableProperty().bind(paramViewModel.dataLoaded().not().or(paramViewModel.launchCommand().runningProperty()));
+
+        progressBar.progressProperty().bind(paramViewModel.progress());
+        progressBar.visibleProperty().bind(paramViewModel.progressBarVisible());
 
         paramViewModel.subscribe(ParamViewModel.ERROR_ALERT, (key, payload) -> {
             String message = String.valueOf(payload[0]);

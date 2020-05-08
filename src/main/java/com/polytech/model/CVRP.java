@@ -1,7 +1,7 @@
 package com.polytech.model;
 
 import com.polytech.model.exception.NoNeighborException;
-import de.saxsys.mvvmfx.Scope;
+import com.polytech.ui.CustomerScope;
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -58,7 +58,7 @@ public final class CVRP {
      *
      * @return generated solution
      */
-    public static Solution greedySolution() {
+    public static Solution greedySolution(CustomerScope scope) {
         List<Route> greedySolution = new ArrayList<>();
 
         List<Stop> stopList = CVRPGraph.getClientList();
@@ -95,6 +95,8 @@ public final class CVRP {
 
         Solution finalSolution = new Solution(greedySolution);
         CVRPGraph.setRoutingSolution(finalSolution);
+        scope.publish("ROUTE_LOADED");
+
         return finalSolution;
     }
 
@@ -106,10 +108,12 @@ public final class CVRP {
      * @param scope the scope we have to notify to update the view
      * @return generated solution
      */
-    public static Solution simulatedAnnealing(Scope scope) {
+    public static Solution simulatedAnnealing(CustomerScope scope) {
 
         Solution currentSolution = randomSolution();
         Solution bestSolution = currentSolution;
+
+        scope.totalIteration().setValue(SIMULATED_ANNEALING_MAX_TEMPERATURE_CHANGE);
 
         Double temperature = null;
 
@@ -138,12 +142,14 @@ public final class CVRP {
                     }
                 }
                 CVRPGraph.setRoutingSolution(currentSolution);
+                scope.currentIteration().setValue(i+1);
                 scope.publish("ROUTE_LOADED");
             }
             temperature = temperature * SIMULATED_ANNEALING_DECREASING_LAW;
         }
 
         CVRPGraph.setRoutingSolution(bestSolution);
+        scope.currentIteration().setValue(0);
         scope.publish("ROUTE_LOADED");
         return bestSolution;
     }
@@ -183,7 +189,9 @@ public final class CVRP {
      * @param scope the scope we have to notify to update the view
      * @return generated solution
      */
-    public static Solution tabuSearch(Scope scope) {
+    public static Solution tabuSearch(CustomerScope scope) {
+
+        scope.totalIteration().setValue(TABU_LIST_MAX_ITERATION);
 
         Solution currentSolution = randomSolution();
         Solution bestSolution = currentSolution;
@@ -211,10 +219,12 @@ public final class CVRP {
             }
 
             CVRPGraph.setRoutingSolution(currentSolution);
+            scope.currentIteration().setValue(i+1);
             scope.publish("ROUTE_LOADED");
         }
 
         CVRPGraph.setRoutingSolution(bestSolution);
+        scope.currentIteration().setValue(0);
         scope.publish("ROUTE_LOADED");
         return bestSolution;
     }

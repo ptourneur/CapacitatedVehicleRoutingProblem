@@ -40,6 +40,9 @@ public class ParamViewModel implements ViewModel {
 
     private final BooleanProperty launchButtonDisable = new SimpleBooleanProperty(!CVRPGraph.getClientList().isEmpty());
 
+    private final DoubleProperty progress = new SimpleDoubleProperty(0.0);
+    private final BooleanProperty progressBarVisible = new SimpleBooleanProperty(false);
+
     public Command launchCommand() {
         return launchCommand;
     }
@@ -70,9 +73,13 @@ public class ParamViewModel implements ViewModel {
 
     public BooleanProperty tabuSolution() { return tabuSolution; }
 
-    public BooleanProperty dataLoaded () {
+    public BooleanProperty dataLoaded() {
         return launchButtonDisable;
     }
+
+    public DoubleProperty progress() { return progress; }
+
+    public BooleanProperty progressBarVisible() { return progressBarVisible; }
 
     public void initialize() {
         scope.subscribe("ROUTE_LOADED", (key, payload) -> refreshSolutionInformation());
@@ -114,14 +121,15 @@ public class ParamViewModel implements ViewModel {
         Solution solution = CVRPGraph.getBestSolution();
         totalVehicleNumber.setValue(solution.getRouteList().size());
         totalDistance.setValue((double) Math.round(solution.getFitness() * 100) / 100);
+        progressBarVisible.setValue(scope.currentIteration().isNotEqualTo(0).get());
+        progress.setValue(scope.currentIteration().get() / scope.totalIteration().get());
     }
 
     private Action greedyAction() {
         return new Action() {
             @Override
             protected void action() {
-                CVRP.greedySolution();
-                scope.publish("ROUTE_LOADED");
+                CVRP.greedySolution(scope);
             }
         };
     }

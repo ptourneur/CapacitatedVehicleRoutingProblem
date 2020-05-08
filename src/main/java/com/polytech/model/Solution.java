@@ -37,7 +37,7 @@ public class Solution {
 
         Solution solution = (Solution) o;
 
-        return getFitness() == solution.getFitness();
+        return routeList.equals(solution.getRouteList());
     }
 
     @Override

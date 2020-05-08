@@ -13,6 +13,9 @@ public class CustomerScope implements Scope {
     private final DoubleProperty selectedVehicleCharge = new SimpleDoubleProperty(0.0);
     private final DoubleProperty selectedVehicleCapacity = new SimpleDoubleProperty(0.0);
 
+    private final IntegerProperty currentIteration = new SimpleIntegerProperty(0);
+    private final DoubleProperty totalIteration = new SimpleDoubleProperty(1.0);
+
     public IntegerProperty selectedVehicleClientNumber() { return selectedVehicleClientNumber; }
 
     public DoubleProperty selectedVehicleDistance() { return selectedVehicleDistance; }
@@ -20,4 +23,8 @@ public class CustomerScope implements Scope {
     public DoubleProperty selectedVehicleCharge() { return selectedVehicleCharge; }
 
     public DoubleProperty selectedVehicleCapacity() { return selectedVehicleCapacity; }
+
+    public IntegerProperty currentIteration() { return currentIteration; }
+
+    public DoubleProperty totalIteration() { return totalIteration; }
 }
