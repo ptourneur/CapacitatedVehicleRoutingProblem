@@ -48,8 +48,8 @@ public class Solution {
     /**
      * Swaps two stops (from same route or different one) if it is possible
      *
-     * @param stop1 first stop to switch
-     * @param stop2 second stop to switch
+     * @param stop1 first stop to swap
+     * @param stop2 second stop to swap
      * @return true if stops were swapped
      */
     public boolean swapTwoStops(Stop stop1, Stop stop2) {
