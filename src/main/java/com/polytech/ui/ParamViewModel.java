@@ -19,7 +19,6 @@ import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import lombok.extern.slf4j.Slf4j;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -29,7 +28,6 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-@Slf4j
 public class ParamViewModel implements ViewModel {
 
     public static final String ERROR_ALERT = "ERROR_ALERT";
@@ -110,7 +108,6 @@ public class ParamViewModel implements ViewModel {
             fileList.addAll(result);
 
         } catch (IOException e) {
-            log.error("loadFiles", e);
             publish(ERROR_ALERT, e.getClass().getCanonicalName());
         }
     }
@@ -123,7 +120,6 @@ public class ParamViewModel implements ViewModel {
             refreshSolutionInformation();
             launchButtonDisable.setValue(!CVRPGraph.getClientList().isEmpty());
         } catch (Exception e) {
-            log.error("loadData", e);
             publish(ERROR_ALERT, e.getClass().getCanonicalName());
         }
     }
@@ -141,7 +137,6 @@ public class ParamViewModel implements ViewModel {
                 tabuSearchCommand.execute();
             }
         } catch (Exception e) {
-            log.error("launchSimulation", e);
             publish(ERROR_ALERT, e.getClass().getCanonicalName());
         }
     }

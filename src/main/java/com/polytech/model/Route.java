@@ -1,7 +1,6 @@
 package com.polytech.model;
 
 import com.polytech.model.exception.UndefinedStopException;
-import lombok.Getter;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
@@ -9,7 +8,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-@Getter
 public class Route {
 
     private final List<Step> stepList = new LinkedList<>();
@@ -152,5 +150,13 @@ public class Route {
     public boolean containsStop(Stop stop) {
         return stepList.stream()
                 .anyMatch(step -> step.getDepartureStop().equals(stop) || step.getArrivalStop().equals(stop));
+    }
+
+    public List<Step> getStepList() {
+        return stepList;
+    }
+
+    public double getCapacity() {
+        return capacity;
     }
 }

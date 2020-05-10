@@ -6,12 +6,11 @@ Projet pour le cours d'optimisation discrète consistant à résoudre des probl�
 
 ### Pré-requis
 
-Vous devez posséder une version de java 11 ou supérieure et un IDE.
-Le code devrait pouvoir être exécuter avec eclipse mais nous n'avons pas tester, préférez Intellij 
+Vous devez posséder une version de java 11 ou supérieure et un intellij
 
 ### Installation
 
-Allez dans File | Open et sélectionnez le dossier CapacitatedVehicleRoutingProblem
+Dans Intellij allez dans File | New | Project from Existing Sources... et si on vous le demande sélectionnez Maven 
 
 Ensuite ouvrez le fichier Main.java et cliquez sur la flèche verte à gauche pour run Main.main()
 

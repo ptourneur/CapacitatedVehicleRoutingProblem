@@ -1,10 +1,5 @@
 package com.polytech.model;
 
-import lombok.Getter;
-import lombok.Setter;
-
-@Getter
-@Setter
 public class Step {
 
     private Stop departureStop;
@@ -40,5 +35,21 @@ public class Step {
         int result = departureStop.hashCode();
         result = 31 * result + arrivalStop.hashCode();
         return result;
+    }
+
+    public Stop getDepartureStop() {
+        return departureStop;
+    }
+
+    public Stop getArrivalStop() {
+        return arrivalStop;
+    }
+
+    public void setDepartureStop(Stop departureStop) {
+        this.departureStop = departureStop;
+    }
+
+    public void setArrivalStop(Stop arrivalStop) {
+        this.arrivalStop = arrivalStop;
     }
 }

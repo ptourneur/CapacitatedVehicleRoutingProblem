@@ -1,13 +1,10 @@
 package com.polytech.model;
 
-import lombok.Getter;
-
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 
-@Getter
 public class Solution {
 
     private final List<Route> routeList = new ArrayList<>();
@@ -150,5 +147,9 @@ public class Solution {
             return true;
         }
         return false;
+    }
+
+    public List<Route> getRouteList() {
+        return routeList;
     }
 }

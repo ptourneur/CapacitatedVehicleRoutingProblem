@@ -1,8 +1,5 @@
 package com.polytech.model;
 
-import lombok.Getter;
-
-@Getter
 public class Stop {
 
     private final int id;
@@ -57,5 +54,25 @@ public class Stop {
         result = 31 * result + (int) (temp ^ (temp >>> 32));
         result = 31 * result + quantity;
         return result;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public double getX() {
+        return x;
+    }
+
+    public double getY() {
+        return y;
+    }
+
+    public int getQuantity() {
+        return quantity;
+    }
+
+    public boolean isRouted() {
+        return routed;
     }
 }
