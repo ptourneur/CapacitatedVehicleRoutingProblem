@@ -21,7 +21,7 @@ public final class CVRP {
     private static final double SIMULATED_ANNEALING_START_DECREASING_LAW = 0.95;
     private static final double SIMULATED_ANNEALING_END_DECREASING_LAW = 0.99;
 
-    private static final int TABU_LIST_SIZE = 175;
+    private static final int TABU_LIST_SIZE = 2000;
     private static final int TABU_LIST_MAX_ITERATION = 10000;
 
     /**
