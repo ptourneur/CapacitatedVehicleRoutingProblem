@@ -13,11 +13,14 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.Random;
 
 public abstract class CVRPAlgorithm {
 
     public static final double VEHICLE_CAPACITY = 100;
     public static final String ROUTE_LOADED = "ROUTE_LOADED";
+
+    protected static final Random random = new Random();
 
     public void runAlgorithm(CustomerScope scope) {
         Graph graph = scope.getGraph()
@@ -33,7 +36,7 @@ public abstract class CVRPAlgorithm {
     public abstract void runAlgorithm(Graph graph, Optional<CustomerScope> scope);
 
     /**
-     * Takes stops and inserts them into a route. When it is full, closes it and inserts into another one
+     * Takes stops randomly and inserts them into a route. When it is full, closes it and inserts into another one
      *
      * @param graph the graph where stops are loaded and in which we have to set the solution
      * @return generated solution
@@ -46,7 +49,11 @@ public abstract class CVRPAlgorithm {
         Route currentRoute = new Route(VEHICLE_CAPACITY);
         randomSolution.add(currentRoute);
 
-        for (Stop stop : graph.getStopList()) {
+        final List<Stop> stopList = new ArrayList<>(graph.getStopList());
+
+        while (!stopList.isEmpty()) {
+            Stop stop = stopList.get(random.nextInt(stopList.size()));
+
             if (currentRoute.getQuantity() + stop.getQuantity() <= currentRoute.getCapacity()) {
                 currentRoute.addStep(new Step(currentRoute.getLastStop().orElse(depot), stop));
             } else {
@@ -55,6 +62,7 @@ public abstract class CVRPAlgorithm {
                 currentRoute.addStep(new Step(depot, stop));
                 randomSolution.add(currentRoute);
             }
+            stopList.remove(stop);
         }
 
         currentRoute.addStep(new Step(currentRoute.getLastStop().orElseThrow(), depot));
