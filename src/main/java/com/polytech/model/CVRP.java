@@ -2,6 +2,7 @@ package com.polytech.model;
 
 import com.polytech.model.exception.NoNeighborException;
 import com.polytech.ui.CustomerScope;
+import de.saxsys.mvvmfx.Scope;
 
 import java.time.Instant;
 import java.util.ArrayList;
@@ -287,6 +288,12 @@ public final class CVRP {
         }
 
         return neighbors;
+    }
+
+    public static Solution geneticAlgorithm(Scope scope) {
+        CVRPGraph.setRoutingSolution(randomSolution());
+        scope.publish("ROUTE_LOADED");
+        return randomSolution();
     }
 
     /**

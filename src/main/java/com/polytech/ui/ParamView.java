@@ -48,6 +48,8 @@ public class ParamView implements FxmlView<ParamViewModel>, Initializable {
     private RadioButton simulatedAnnealingSolutionButton;
     @FXML
     private RadioButton tabuSolutionButton;
+    @FXML
+    private RadioButton geneticSolutionButton;
 
     @FXML
     private Button launchButton;
@@ -91,6 +93,8 @@ public class ParamView implements FxmlView<ParamViewModel>, Initializable {
         paramViewModel.simulatedAnnealingSolution().bind(simulatedAnnealingSolutionButton.selectedProperty());
         tabuSolutionButton.setToggleGroup(radioButtonGroup);
         paramViewModel.tabuSolution().bind(tabuSolutionButton.selectedProperty());
+        geneticSolutionButton.setToggleGroup(radioButtonGroup);
+        paramViewModel.geneticSolution().bind(geneticSolutionButton.selectedProperty());
 
         launchButton.disableProperty().bind(paramViewModel.dataLoaded().not().or(paramViewModel.launchCommand().runningProperty()));
 

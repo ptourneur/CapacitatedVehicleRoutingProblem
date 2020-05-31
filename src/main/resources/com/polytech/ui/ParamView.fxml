@@ -183,6 +183,11 @@
                                     <Font size="14.0"/>
                                 </font>
                             </RadioButton>
+                            <RadioButton fx:id="geneticSolutionButton" text="Génétique">
+                                <font>
+                                    <Font size="14.0"/>
+                                </font>
+                            </RadioButton>
                         </VBox>
                     </HBox>
 

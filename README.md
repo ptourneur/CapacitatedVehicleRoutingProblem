@@ -6,7 +6,7 @@ Projet pour le cours d'optimisation discrète consistant à résoudre des probl�
 
 ### Pré-requis
 
-Vous devez posséder une version de java 11 ou supérieure et un intellij
+Vous devez posséder une version de java 11 ou supérieure et Intellij IDEA
 
 ### Installation
 

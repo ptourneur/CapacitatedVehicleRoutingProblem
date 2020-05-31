@@ -38,6 +38,7 @@ public class ParamViewModel implements ViewModel {
     private final Command greedyCommand = new DelegateCommand(this::greedyAction, true);
     private final Command simulatedAnnealingCommand = new DelegateCommand(this::simulatedAnnealingAction, true);
     private final Command tabuSearchCommand = new DelegateCommand(this::tabuSearchAction, true);
+    private final Command geneticCommand = new DelegateCommand(this::geneticAlgorithmAction, true);
     private final Command launchCommand = new CompositeCommand(greedyCommand, simulatedAnnealingCommand, tabuSearchCommand);
 
     private final IntegerProperty totalClientNumber = new SimpleIntegerProperty(0);
@@ -50,6 +51,7 @@ public class ParamViewModel implements ViewModel {
     private final BooleanProperty greedySolution = new SimpleBooleanProperty();
     private final BooleanProperty simulatedAnnealingSolution = new SimpleBooleanProperty();
     private final BooleanProperty tabuSolution = new SimpleBooleanProperty();
+    private final BooleanProperty geneticSolution = new SimpleBooleanProperty();
 
     private final BooleanProperty launchButtonDisable = new SimpleBooleanProperty(!CVRPGraph.getClientList().isEmpty());
 
@@ -89,6 +91,8 @@ public class ParamViewModel implements ViewModel {
     public BooleanProperty simulatedAnnealingSolution() { return simulatedAnnealingSolution; }
 
     public BooleanProperty tabuSolution() { return tabuSolution; }
+
+    public BooleanProperty geneticSolution() { return geneticSolution; }
 
     public BooleanProperty dataLoaded() {
         return launchButtonDisable;
@@ -136,6 +140,9 @@ public class ParamViewModel implements ViewModel {
             if (tabuSolution.get()) {
                 tabuSearchCommand.execute();
             }
+            if (geneticSolution.get()) {
+                geneticCommand.execute();
+            }
         } catch (Exception e) {
             publish(ERROR_ALERT, e.getClass().getCanonicalName());
         }
@@ -173,6 +180,15 @@ public class ParamViewModel implements ViewModel {
             @Override
             protected void action() {
                 CVRP.tabuSearch(scope);
+            }
+        };
+    }
+
+    private Action geneticAlgorithmAction() {
+        return new Action() {
+            @Override
+            protected void action() {
+                CVRP.geneticAlgorithm(scope);
             }
         };
     }
