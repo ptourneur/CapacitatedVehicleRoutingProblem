@@ -96,7 +96,7 @@ public class ParamView implements FxmlView<ParamViewModel>, Initializable {
         geneticSolutionButton.setToggleGroup(radioButtonGroup);
         paramViewModel.geneticSolution().bind(geneticSolutionButton.selectedProperty());
 
-        launchButton.disableProperty().bind(paramViewModel.dataLoaded().not().or(paramViewModel.launchCommand().runningProperty()));
+        launchButton.disableProperty().bind(paramViewModel.stopLoaded().not().or(paramViewModel.launchCommand().runningProperty()));
 
         progressBar.progressProperty().bind(paramViewModel.progress());
         progressBar.visibleProperty().bind(paramViewModel.progressBarVisible());

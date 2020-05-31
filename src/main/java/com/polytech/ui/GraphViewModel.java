@@ -1,6 +1,5 @@
 package com.polytech.ui;
 
-import com.polytech.model.CVRPGraph;
 import com.polytech.model.Route;
 import com.polytech.model.Step;
 import com.polytech.model.Stop;
@@ -21,6 +20,8 @@ import java.util.stream.Collectors;
 public class GraphViewModel implements ViewModel {
 
     private static final double UI_UNIT = 7.4;
+    private static final String STOP_LOADED = "STOP_LOADED";
+    private static final String ROUTE_LOADED = "ROUTE_LOADED";
 
     private final ObservableList<Group> stopList = FXCollections.observableArrayList();
     private final ObservableList<Group> stepList = FXCollections.observableArrayList();
@@ -30,43 +31,51 @@ public class GraphViewModel implements ViewModel {
 
     public void initialize() {
 
-        scope.subscribe("STOP_LOADED", (key, payload) -> {
-            stepList.clear();
-            stopList.clear();
-            Stop depot = CVRPGraph.getDepot();
-            stopList.add(new Group(new Circle(toUiUnit(depot.getX()), toUiUnit(depot.getY()), 3, Color.BLACK)));
-            stopList.addAll(CVRPGraph.getClientList().stream()
-                    .map(this::initializeCircleGroup)
-                    .collect(Collectors.toList()));
+        scope.subscribe(STOP_LOADED, (key, payload) -> {
+            scope.getGraph().ifPresent(
+                    graph -> {
+                        stepList.clear();
+                        stopList.clear();
+                        Stop depot = graph.getDepot();
+                        stopList.add(new Group(new Circle(toUiUnit(depot.getX()), toUiUnit(depot.getY()), 3, Color.BLACK)));
+                        stopList.addAll(graph.getStopList().stream()
+                                .map(this::initializeCircleGroup)
+                                .collect(Collectors.toList()));
+                    }
+            );
         });
 
-        scope.subscribe("ROUTE_LOADED", (key, payload) -> {
-            stepList.clear();
-            List<Route> routes = CVRPGraph.getBestSolution().getRouteList();
-            for (Route route : routes) {
-                Color color = Color.color(Math.random(), Math.random(), Math.random());
-                List<Step> steps = route.getStepList();
-                Group group = new Group();
-                Group labelGroup = new Group();
-                labelGroup.setVisible(false);
-                for (Step step : steps) {
-                    Line line = new Line(toUiUnit(step.getDepartureStop().getX()), toUiUnit(step.getDepartureStop().getY()),
-                            toUiUnit(step.getArrivalStop().getX()), toUiUnit(step.getArrivalStop().getY()));
-                    line.setStroke(color);
-                    Line lineForEventTriggering = new Line(toUiUnit(step.getDepartureStop().getX()), toUiUnit(step.getDepartureStop().getY()),
-                            toUiUnit(step.getArrivalStop().getX()), toUiUnit(step.getArrivalStop().getY()));
-                    lineForEventTriggering.setStrokeWidth(10);
-                    lineForEventTriggering.setStroke(Color.TRANSPARENT);
-                    Text text = new Text((line.getStartX() + (line.getEndX() - line.getStartX()) / 2), (line.getStartY() + (line.getEndY() - line.getStartY()) / 2),
-                            String.valueOf((double) Math.round(step.getCost() * 10) / 10));
-                    text.setFont(Font.font("Arial", 9));
-                    lineForEventTriggering.setOnMouseEntered(mouseEvent -> handleMouseEntered(labelGroup, route));
-                    lineForEventTriggering.setOnMouseExited(mouseEvent -> handleMouseExited(labelGroup));
-                    group.getChildren().addAll(line, lineForEventTriggering);
-                    labelGroup.getChildren().add(text);
-                }
-                stepList.addAll(group, labelGroup);
-            }
+        scope.subscribe(ROUTE_LOADED, (key, payload) -> {
+            scope.getGraph().ifPresent(
+                    graph -> {
+                        stepList.clear();
+                        List<Route> routes = graph.getRoutingSolution().getRouteList();
+                        for (Route route : routes) {
+                            Color color = Color.color(Math.random(), Math.random(), Math.random());
+                            List<Step> steps = route.getStepList();
+                            Group group = new Group();
+                            Group labelGroup = new Group();
+                            labelGroup.setVisible(false);
+                            for (Step step : steps) {
+                                Line line = new Line(toUiUnit(step.getDepartureStop().getX()), toUiUnit(step.getDepartureStop().getY()),
+                                        toUiUnit(step.getArrivalStop().getX()), toUiUnit(step.getArrivalStop().getY()));
+                                line.setStroke(color);
+                                Line lineForEventTriggering = new Line(toUiUnit(step.getDepartureStop().getX()), toUiUnit(step.getDepartureStop().getY()),
+                                        toUiUnit(step.getArrivalStop().getX()), toUiUnit(step.getArrivalStop().getY()));
+                                lineForEventTriggering.setStrokeWidth(10);
+                                lineForEventTriggering.setStroke(Color.TRANSPARENT);
+                                Text text = new Text((line.getStartX() + (line.getEndX() - line.getStartX()) / 2), (line.getStartY() + (line.getEndY() - line.getStartY()) / 2),
+                                        String.valueOf((double) Math.round(step.getCost() * 10) / 10));
+                                text.setFont(Font.font("Arial", 9));
+                                lineForEventTriggering.setOnMouseEntered(mouseEvent -> handleMouseEntered(labelGroup, route));
+                                lineForEventTriggering.setOnMouseExited(mouseEvent -> handleMouseExited(labelGroup));
+                                group.getChildren().addAll(line, lineForEventTriggering);
+                                labelGroup.getChildren().add(text);
+                            }
+                            stepList.addAll(group, labelGroup);
+                        }
+                    }
+            );
         });
     }
 

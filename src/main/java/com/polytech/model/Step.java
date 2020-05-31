@@ -1,5 +1,7 @@
 package com.polytech.model;
 
+import com.polytech.model.algorithm.CVRPAlgorithm;
+
 public class Step {
 
     private Stop departureStop;
@@ -16,7 +18,7 @@ public class Step {
     }
 
     public double getCost() {
-        return CVRP.computeCost(departureStop, arrivalStop);
+        return CVRPAlgorithm.computeCost(departureStop, arrivalStop);
     }
 
     @Override

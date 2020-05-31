@@ -1,8 +1,12 @@
 package com.polytech.ui;
 
-import com.polytech.model.CVRP;
-import com.polytech.model.CVRPGraph;
+import com.polytech.model.Graph;
 import com.polytech.model.Solution;
+import com.polytech.model.algorithm.CVRPAlgorithm;
+import com.polytech.model.algorithm.GeneticAlgorithm;
+import com.polytech.model.algorithm.SimulatedAnnealing;
+import com.polytech.model.algorithm.TabuSearch;
+import com.polytech.model.filereader.CVRPFileReader;
 import de.saxsys.mvvmfx.InjectScope;
 import de.saxsys.mvvmfx.ViewModel;
 import de.saxsys.mvvmfx.utils.commands.Action;
@@ -31,6 +35,7 @@ import java.util.stream.Stream;
 public class ParamViewModel implements ViewModel {
 
     public static final String ERROR_ALERT = "ERROR_ALERT";
+    public static final String ROUTE_LOADED = "ROUTE_LOADED";
 
     @InjectScope
     private CustomerScope scope;
@@ -53,7 +58,7 @@ public class ParamViewModel implements ViewModel {
     private final BooleanProperty tabuSolution = new SimpleBooleanProperty();
     private final BooleanProperty geneticSolution = new SimpleBooleanProperty();
 
-    private final BooleanProperty launchButtonDisable = new SimpleBooleanProperty(!CVRPGraph.getClientList().isEmpty());
+    private final BooleanProperty stopLoaded = new SimpleBooleanProperty(false);
 
     private final DoubleProperty progress = new SimpleDoubleProperty(0.0);
     private final BooleanProperty progressBarVisible = new SimpleBooleanProperty(false);
@@ -74,36 +79,62 @@ public class ParamViewModel implements ViewModel {
         return totalVehicleNumber;
     }
 
-    public IntegerProperty selectedVehicleClientNumber() { return scope.selectedVehicleClientNumber(); }
-
-    public DoubleProperty selectedVehicleDistance() { return scope.selectedVehicleDistance(); }
-
-    public DoubleProperty selectedVehicleCharge() { return scope.selectedVehicleCharge(); }
-
-    public DoubleProperty selectedVehicleCapacity() { return scope.selectedVehicleCapacity(); }
-
-    public ObservableList<String> fileList() { return fileList; }
-
-    public StringProperty selectedFile() { return selectedFile; }
-
-    public BooleanProperty greedySolution() { return greedySolution; }
-
-    public BooleanProperty simulatedAnnealingSolution() { return simulatedAnnealingSolution; }
-
-    public BooleanProperty tabuSolution() { return tabuSolution; }
-
-    public BooleanProperty geneticSolution() { return geneticSolution; }
-
-    public BooleanProperty dataLoaded() {
-        return launchButtonDisable;
+    public IntegerProperty selectedVehicleClientNumber() {
+        return scope.selectedVehicleClientNumber();
     }
 
-    public DoubleProperty progress() { return progress; }
+    public DoubleProperty selectedVehicleDistance() {
+        return scope.selectedVehicleDistance();
+    }
 
-    public BooleanProperty progressBarVisible() { return progressBarVisible; }
+    public DoubleProperty selectedVehicleCharge() {
+        return scope.selectedVehicleCharge();
+    }
+
+    public DoubleProperty selectedVehicleCapacity() {
+        return scope.selectedVehicleCapacity();
+    }
+
+    public ObservableList<String> fileList() {
+        return fileList;
+    }
+
+    public StringProperty selectedFile() {
+        return selectedFile;
+    }
+
+    public BooleanProperty greedySolution() {
+        return greedySolution;
+    }
+
+    public BooleanProperty simulatedAnnealingSolution() {
+        return simulatedAnnealingSolution;
+    }
+
+    public BooleanProperty tabuSolution() {
+        return tabuSolution;
+    }
+
+    public BooleanProperty geneticSolution() {
+        return geneticSolution;
+    }
+
+    public BooleanProperty stopLoaded() {
+        return stopLoaded;
+    }
+
+    public DoubleProperty progress() {
+        return progress;
+    }
+
+    public BooleanProperty progressBarVisible() {
+        return progressBarVisible;
+    }
 
     public void initialize() {
-        scope.subscribe("ROUTE_LOADED", (key, payload) -> refreshSolutionInformation());
+        scope.subscribe(ROUTE_LOADED, (key, payload) ->
+                scope.getGraph().ifPresent(this::refreshSolutionInformation)
+        );
         try (Stream<Path> walk = Files.walk(Paths.get("src/main/resources/data"))) {
 
             List<String> result = walk.filter(Files::isRegularFile)
@@ -118,11 +149,11 @@ public class ParamViewModel implements ViewModel {
 
     public void loadData() {
         try {
-            CVRPGraph.reinitializeRoutingSolution();
-            CVRPGraph.loadDataFile("src/main/resources/data/" + selectedFile.get());
+            Graph graph = CVRPFileReader.loadDataFile(selectedFile.get());
+            scope.setGraph(graph);
             scope.publish("STOP_LOADED");
-            refreshSolutionInformation();
-            launchButtonDisable.setValue(!CVRPGraph.getClientList().isEmpty());
+            refreshSolutionInformation(graph);
+            stopLoaded.setValue(!graph.getStopList().isEmpty());
         } catch (Exception e) {
             publish(ERROR_ALERT, e.getClass().getCanonicalName());
         }
@@ -130,7 +161,6 @@ public class ParamViewModel implements ViewModel {
 
     public void launchSimulation() {
         try {
-            CVRPGraph.reinitializeRoutingSolution();
             if (greedySolution.get()) {
                 greedyCommand.execute();
             }
@@ -148,9 +178,9 @@ public class ParamViewModel implements ViewModel {
         }
     }
 
-    private void refreshSolutionInformation() {
-        totalClientNumber.setValue(CVRPGraph.getClientList().size());
-        Solution solution = CVRPGraph.getBestSolution();
+    private void refreshSolutionInformation(Graph graph) {
+        totalClientNumber.setValue(graph.getStopList().size());
+        Solution solution = graph.getRoutingSolution();
         totalVehicleNumber.setValue(solution.getRouteList().size());
         totalDistance.setValue((double) Math.round(solution.getFitness() * 100) / 100);
         progressBarVisible.setValue(scope.currentIteration().isNotEqualTo(0).get());
@@ -161,7 +191,8 @@ public class ParamViewModel implements ViewModel {
         return new Action() {
             @Override
             protected void action() {
-                CVRP.greedySolution(scope);
+                scope.getGraph().ifPresent(CVRPAlgorithm::greedySolution);
+                scope.publish(ROUTE_LOADED);
             }
         };
     }
@@ -170,7 +201,7 @@ public class ParamViewModel implements ViewModel {
         return new Action() {
             @Override
             protected void action() {
-                CVRP.simulatedAnnealing(scope);
+                new SimulatedAnnealing().applyAlgorithm(scope);
             }
         };
     }
@@ -179,7 +210,7 @@ public class ParamViewModel implements ViewModel {
         return new Action() {
             @Override
             protected void action() {
-                CVRP.tabuSearch(scope);
+                new TabuSearch().applyAlgorithm(scope);
             }
         };
     }
@@ -188,7 +219,7 @@ public class ParamViewModel implements ViewModel {
         return new Action() {
             @Override
             protected void action() {
-                CVRP.geneticAlgorithm(scope);
+                new GeneticAlgorithm().applyAlgorithm(scope);
             }
         };
     }
