@@ -201,7 +201,7 @@ public class ParamViewModel implements ViewModel {
         return new Action() {
             @Override
             protected void action() {
-                new SimulatedAnnealing().applyAlgorithm(scope);
+                new SimulatedAnnealing().runAlgorithm(scope);
             }
         };
     }
@@ -210,7 +210,7 @@ public class ParamViewModel implements ViewModel {
         return new Action() {
             @Override
             protected void action() {
-                new TabuSearch().applyAlgorithm(scope);
+                new TabuSearch().runAlgorithm(scope);
             }
         };
     }
@@ -219,7 +219,7 @@ public class ParamViewModel implements ViewModel {
         return new Action() {
             @Override
             protected void action() {
-                new GeneticAlgorithm().applyAlgorithm(scope);
+                new GeneticAlgorithm().runAlgorithm(scope);
             }
         };
     }

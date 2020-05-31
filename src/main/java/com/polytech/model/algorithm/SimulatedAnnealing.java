@@ -26,10 +26,9 @@ public class SimulatedAnnealing extends NeighborhoodAlgorithm {
      *
      * @param graph the graph where stops are loaded and in which we have to set the solution
      * @param optionalScope the scope we have to notify to update the view
-     * @return generated solution
      */
     @Override
-    public Solution applyAlgorithm(Graph graph, Optional<CustomerScope> optionalScope) {
+    public void runAlgorithm(Graph graph, Optional<CustomerScope> optionalScope) {
 
         long start = Instant.now().getEpochSecond();
         Solution currentSolution = CVRPAlgorithm.randomSolution(graph);
@@ -86,7 +85,6 @@ public class SimulatedAnnealing extends NeighborhoodAlgorithm {
         );
 
         System.out.println(Instant.ofEpochSecond(Instant.now().getEpochSecond() - start));
-        return bestSolution;
     }
 
     /**

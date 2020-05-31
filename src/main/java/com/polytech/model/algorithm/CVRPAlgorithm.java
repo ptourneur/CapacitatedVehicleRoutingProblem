@@ -19,22 +19,23 @@ public abstract class CVRPAlgorithm {
     public static final double VEHICLE_CAPACITY = 100;
     public static final String ROUTE_LOADED = "ROUTE_LOADED";
 
-    public Solution applyAlgorithm(CustomerScope scope) {
+    public void runAlgorithm(CustomerScope scope) {
         Graph graph = scope.getGraph()
                 .orElseThrow(StopNotLoadedException::new);
-        return applyAlgorithm(graph, Optional.of(scope));
+        runAlgorithm(graph, Optional.of(scope));
     }
 
-    public Solution applyAlgorithm(String filename) throws IOException {
+    public void runAlgorithm(String filename) throws IOException {
         Graph graph = CVRPFileReader.loadDataFile(filename);
-        return applyAlgorithm(graph, Optional.empty());
+        runAlgorithm(graph, Optional.empty());
     }
 
-    public abstract Solution applyAlgorithm(Graph graph, Optional<CustomerScope> scope);
+    public abstract void runAlgorithm(Graph graph, Optional<CustomerScope> scope);
 
     /**
      * Takes stops and inserts them into a route. When it is full, closes it and inserts into another one
      *
+     * @param graph the graph where stops are loaded and in which we have to set the solution
      * @return generated solution
      */
     public static Solution randomSolution(Graph graph) {
@@ -66,6 +67,7 @@ public abstract class CVRPAlgorithm {
     /**
      * Inserts in each route the best stop in order to minimize the cost
      *
+     * @param graph the graph where stops are loaded and in which we have to set the solution
      * @return generated solution
      */
     public static Solution greedySolution(Graph graph) {

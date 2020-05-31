@@ -21,10 +21,9 @@ public class TabuSearch extends NeighborhoodAlgorithm {
      *
      * @param graph the graph where stops are loaded and in which we have to set the solution
      * @param optionalScope the scope we have to notify to update the view
-     * @return generated solution
      */
     @Override
-    public Solution applyAlgorithm(Graph graph, Optional<CustomerScope> optionalScope) {
+    public void runAlgorithm(Graph graph, Optional<CustomerScope> optionalScope) {
 
         optionalScope.ifPresent(scope -> scope.totalIteration().setValue(TABU_LIST_MAX_ITERATION));
 
@@ -68,7 +67,5 @@ public class TabuSearch extends NeighborhoodAlgorithm {
                     scope.publish(ROUTE_LOADED);
                 }
         );
-        return bestSolution;
-
     }
 }
