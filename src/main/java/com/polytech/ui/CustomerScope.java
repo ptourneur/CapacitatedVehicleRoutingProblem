@@ -16,7 +16,7 @@ public class CustomerScope implements Scope {
     private final DoubleProperty selectedVehicleCharge = new SimpleDoubleProperty(0.0);
     private final DoubleProperty selectedVehicleCapacity = new SimpleDoubleProperty(0.0);
 
-    private final IntegerProperty currentIteration = new SimpleIntegerProperty(0);
+    private final DoubleProperty currentIteration = new SimpleDoubleProperty(0.0);
     private final DoubleProperty totalIteration = new SimpleDoubleProperty(1.0);
 
     private Graph graph = null;
@@ -29,7 +29,7 @@ public class CustomerScope implements Scope {
 
     public DoubleProperty selectedVehicleCapacity() { return selectedVehicleCapacity; }
 
-    public IntegerProperty currentIteration() { return currentIteration; }
+    public DoubleProperty currentIteration() { return currentIteration; }
 
     public DoubleProperty totalIteration() { return totalIteration; }
 

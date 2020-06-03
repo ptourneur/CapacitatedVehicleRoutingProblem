@@ -43,6 +43,14 @@ public class Route {
         return initialStop.isPresent() && finalStop.isPresent() && initialStop.equals(finalStop);
     }
 
+    public boolean isValid() {
+        return isComplete() && getCapacity() <= capacity;
+    }
+
+    public boolean isEmpty() {
+        return stepList.isEmpty();
+    }
+
     public void addStep(Step step) {
         stepList.add(step);
     }
@@ -107,8 +115,9 @@ public class Route {
             }
 
             if (step1ToAdd != null) {
-                stepList.add(step1ToAdd);
-                stepList.add(step2ToAdd);
+                int index = stepList.indexOf(stepToRemove);
+                stepList.add(index, step1ToAdd);
+                stepList.add(index+1, step2ToAdd);
                 stepList.remove(stepToRemove);
                 return true;
             }

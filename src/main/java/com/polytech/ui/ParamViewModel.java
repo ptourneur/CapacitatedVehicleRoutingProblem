@@ -23,6 +23,7 @@ import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.scene.control.ProgressBar;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -184,7 +185,9 @@ public class ParamViewModel implements ViewModel {
         totalVehicleNumber.setValue(solution.getRouteList().size());
         totalDistance.setValue((double) Math.round(solution.getFitness() * 100) / 100);
         progressBarVisible.setValue(scope.currentIteration().isNotEqualTo(0).get());
-        progress.setValue(scope.currentIteration().get() / scope.totalIteration().get());
+        progress.setValue(scope.currentIteration().get() == ProgressBar.INDETERMINATE_PROGRESS
+                ? ProgressBar.INDETERMINATE_PROGRESS
+                : scope.currentIteration().get() / scope.totalIteration().get());
     }
 
     private Action greedyAction() {

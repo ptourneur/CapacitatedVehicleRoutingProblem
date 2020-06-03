@@ -61,11 +61,9 @@ public class TabuSearch extends NeighborhoodAlgorithm {
         }
 
         graph.setRoutingSolution(bestSolution);
-        optionalScope.ifPresent(
-                scope -> {
-                    scope.currentIteration().setValue(0);
-                    scope.publish(ROUTE_LOADED);
-                }
-        );
+        if (optionalScope.isPresent()) {
+            optionalScope.get().currentIteration().setValue(0);
+            optionalScope.get().publish(ROUTE_LOADED);
+        }
     }
 }

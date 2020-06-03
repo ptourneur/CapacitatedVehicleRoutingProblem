@@ -1,8 +1,13 @@
 package com.polytech.model;
 
+import com.polytech.model.exception.EmptyRouteException;
+
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
 import java.util.stream.Collectors;
 
 public class Solution {
@@ -20,11 +25,67 @@ public class Solution {
                         .collect(Collectors.toList()));
     }
 
+    public Solution(Map<Stop, Integer> chromosome, Stop depot, double capacity) {
+        long routeNumber = chromosome.values().stream()
+                .distinct()
+                .count();
+
+        for (int i = 0; i < routeNumber; i++) {
+            routeList.add(new Route(capacity));
+        }
+
+        for (Map.Entry<Stop, Integer> entry : chromosome.entrySet()) {
+            Route route = routeList.get(entry.getValue());
+
+            if (route.isEmpty()) {
+                route.addStep(new Step(depot, entry.getKey()));
+                route.addStep(new Step(entry.getKey(), depot));
+            } else {
+                route.addStop(entry.getKey());
+            }
+        }
+    }
+
     public double getFitness() {
         return routeList.stream()
                 .map(Route::getStepList)
                 .flatMap(Collection::stream)
                 .mapToDouble(Step::getCost).sum();
+    }
+
+    /**
+     * Check if all the routes are valid and if all stop are in a route
+     *
+     * @param stopCount the global stop number of the problem except the depot
+     * @return true if the solution is valid
+     */
+    public boolean isValid(int stopCount) {
+        return routeList.stream()
+                .allMatch(Route::isValid) &&
+               routeList.stream()
+                       .map(Route::getStopList)
+                       .flatMap(Collection::stream)
+                       .distinct()
+                       .count() == stopCount;
+    }
+
+    public Stop getDepot() {
+        if (routeList.isEmpty()) {
+            throw new EmptyRouteException();
+        }
+        return routeList.get(0).getFirstStop()
+                .orElseThrow(EmptyRouteException::new);
+    }
+
+    public Map<Stop, Integer> getChromosome() {
+        Map<Stop, Integer> chromosome = new TreeMap<>(Comparator.comparingInt(Stop::getId));
+
+        for (Route route : routeList) {
+            route.getStopList()
+                    .forEach(stop -> chromosome.put(stop, routeList.indexOf(route)));
+        }
+
+        return chromosome;
     }
 
     @Override
@@ -94,7 +155,7 @@ public class Solution {
      * delete it from its old one and delete its old route if it was the only stop inside
      *
      * @param newStop the stop to add
-     * @param route the route which wil
+     * @param route the route which will receive the stop
      * @return true if the node was added
      */
     public boolean addStopToExistingRoute(Stop newStop, Route route) {
@@ -152,4 +213,13 @@ public class Solution {
     public List<Route> getRouteList() {
         return routeList;
     }
+
+    public List<Stop> getStopList() {
+        return routeList.stream()
+                .map(Route::getStopList)
+                .flatMap(Collection::stream)
+                .distinct()
+                .collect(Collectors.toList());
+    }
+
 }
