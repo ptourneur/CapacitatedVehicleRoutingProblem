@@ -39,9 +39,10 @@ public abstract class CVRPAlgorithm {
      * Takes stops randomly and inserts them into a route. When it is full, closes it and inserts into another one
      *
      * @param graph the graph where stops are loaded and in which we have to set the solution
+     * @param fillingRate a percent of maximul filling of each route
      * @return generated solution
      */
-    public static Solution randomSolution(Graph graph) {
+    public static Solution randomSolution(Graph graph, double fillingRate) {
         List<Route> randomSolution = new ArrayList<>();
 
         final Stop depot = graph.getDepot();
@@ -54,7 +55,7 @@ public abstract class CVRPAlgorithm {
         while (!stopList.isEmpty()) {
             Stop stop = stopList.get(random.nextInt(stopList.size()));
 
-            if (currentRoute.getQuantity() + stop.getQuantity() <= currentRoute.getCapacity()) {
+            if (currentRoute.getQuantity() + stop.getQuantity() <= currentRoute.getCapacity() * fillingRate) {
                 currentRoute.addStep(new Step(currentRoute.getLastStop().orElse(depot), stop));
             } else {
                 currentRoute.addStep(new Step(currentRoute.getLastStop().orElseThrow(), depot));
@@ -70,6 +71,10 @@ public abstract class CVRPAlgorithm {
         Solution finalSolution = new Solution(randomSolution);
         graph.setRoutingSolution(finalSolution);
         return finalSolution;
+    }
+
+    public static Solution randomSolution(Graph graph) {
+        return randomSolution(graph, 1.0);
     }
 
     /**

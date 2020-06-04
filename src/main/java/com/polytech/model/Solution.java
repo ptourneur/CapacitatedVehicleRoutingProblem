@@ -26,16 +26,20 @@ public class Solution {
     }
 
     public Solution(Map<Stop, Integer> chromosome, Stop depot, double capacity) {
-        long routeNumber = chromosome.values().stream()
+        List<Integer> routeIdList = chromosome.values().stream()
                 .distinct()
-                .count();
+                .collect(Collectors.toList());
 
-        for (int i = 0; i < routeNumber; i++) {
-            routeList.add(new Route(capacity));
+        for (Integer routeId : routeIdList) {
+            routeList.add(new Route(routeId, capacity));
         }
 
         for (Map.Entry<Stop, Integer> entry : chromosome.entrySet()) {
-            Route route = routeList.get(entry.getValue());
+
+            Route route = routeList.stream()
+                    .filter(route1 -> route1.getId() == entry.getValue())
+                    .findFirst()
+                    .orElseThrow();
 
             if (route.isEmpty()) {
                 route.addStep(new Step(depot, entry.getKey()));

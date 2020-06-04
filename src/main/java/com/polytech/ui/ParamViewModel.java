@@ -204,7 +204,12 @@ public class ParamViewModel implements ViewModel {
         return new Action() {
             @Override
             protected void action() {
-                new SimulatedAnnealing().runAlgorithm(scope);
+                try {
+                    new SimulatedAnnealing().runAlgorithm(scope);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    publish(ERROR_ALERT, e.getClass().getCanonicalName());
+                }
             }
         };
     }
@@ -213,7 +218,12 @@ public class ParamViewModel implements ViewModel {
         return new Action() {
             @Override
             protected void action() {
-                new TabuSearch().runAlgorithm(scope);
+                try {
+                    new TabuSearch().runAlgorithm(scope);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    publish(ERROR_ALERT, e.getClass().getCanonicalName());
+                }
             }
         };
     }
@@ -222,7 +232,11 @@ public class ParamViewModel implements ViewModel {
         return new Action() {
             @Override
             protected void action() {
-                new GeneticAlgorithm().runAlgorithm(scope);
+                try {
+                    new GeneticAlgorithm().runAlgorithm(scope);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
             }
         };
     }

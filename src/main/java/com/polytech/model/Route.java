@@ -10,14 +10,21 @@ import java.util.stream.Collectors;
 
 public class Route {
 
-    private final List<Step> stepList = new LinkedList<>();
+    private int id;
     private final double capacity;
+    private final List<Step> stepList = new LinkedList<>();
 
     public Route(double capacity) {
         this.capacity = capacity;
     }
 
+    public Route(int id, double capacity) {
+        this.id = id;
+        this.capacity = capacity;
+    }
+
     public Route(Route route) {
+        this.id = id;
         this.capacity = route.getCapacity();
         this.stepList.addAll(route.getStepList().stream().map(Step::new).collect(Collectors.toList()));
     }
@@ -57,6 +64,10 @@ public class Route {
 
     public double getCost() {
         return stepList.stream().mapToDouble(Step::getCost).sum();
+    }
+
+    public int getId() {
+        return id;
     }
 
     public int getQuantity() {
