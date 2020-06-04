@@ -17,7 +17,7 @@ import java.util.Optional;
 public class GeneticAlgorithm extends CVRPAlgorithm {
 
     private static final int POPULATION_SIZE = 100;
-    private static final int SELECTED_SOLUTION_PER_SELECTION = 100;
+    private static final int SELECTED_SOLUTION_PER_SELECTION = POPULATION_SIZE;
     private static final double MUTATION_PROBABILITY = 0.1;
 
     /**
@@ -38,42 +38,44 @@ public class GeneticAlgorithm extends CVRPAlgorithm {
         for (int i = 0; i < POPULATION_SIZE; i++) {
             population.add(CVRPAlgorithm.randomSolution(graph, 0.5));
         }
-            while (population.stream().distinct().count() > 1) {
-                List<Solution> selection = selection(population);
+        while (population.stream().distinct().count() > 1) {
+            List<Solution> selection = selection(population);
 
-                for (int i = 0; i < selection.size() / 2; i = i + 2) {
+            for (int i = 0; i < selection.size() / 2; i = i + 2) {
 
-                    Solution solution1 = selection.get(i);
-                    Solution solution2 = selection.get(i + 1);
-                    Tuple2<Solution> crossoverSolutions = crossover(solution1, solution2);
+                Solution solution1 = selection.get(i);
+                Solution solution2 = selection.get(i + 1);
+                Tuple2<Solution> crossoverSolutions = crossover(solution1, solution2);
 
-                    Solution newSolution1 = crossoverSolutions.getT1();
-                    Solution newSolution2 = crossoverSolutions.getT2();
+                Solution newSolution1 = crossoverSolutions.getT1();
+                Solution newSolution2 = crossoverSolutions.getT2();
 
+                if (newSolution1 != solution1 && newSolution2 != solution2) {
                     population.add(newSolution1);
                     population.add(newSolution2);
                     population.sort(Comparator.comparingDouble(Solution::getFitness));
                     population.removeLast();
                     population.removeLast();
-
-                    Solution currentBestSolution = population.stream()
-                            .min(Comparator.comparingDouble(Solution::getFitness))
-                            .orElseThrow();
-
-                    if (bestSolution == null || currentBestSolution.getFitness() < bestSolution.getFitness()) {
-                        bestSolution = currentBestSolution;
-                    }
-
-                    graph.setRoutingSolution(currentBestSolution);
-                    optionalScope.ifPresent(scope -> scope.publish(ROUTE_LOADED));
                 }
             }
 
-            graph.setRoutingSolution(bestSolution);
-            if (optionalScope.isPresent()) {
-                optionalScope.get().currentIteration().setValue(0);
-                optionalScope.get().publish(ROUTE_LOADED);
+            Solution currentBestSolution = population.stream()
+                    .min(Comparator.comparingDouble(Solution::getFitness))
+                    .orElseThrow();
+
+            if (bestSolution == null || currentBestSolution.getFitness() < bestSolution.getFitness()) {
+                bestSolution = currentBestSolution;
             }
+
+            graph.setRoutingSolution(currentBestSolution);
+            optionalScope.ifPresent(scope -> scope.publish(ROUTE_LOADED));
+        }
+
+        graph.setRoutingSolution(bestSolution);
+        if (optionalScope.isPresent()) {
+            optionalScope.get().currentIteration().setValue(0);
+            optionalScope.get().publish(ROUTE_LOADED);
+        }
     }
 
     private List<Solution> selection(List<Solution> population) {
