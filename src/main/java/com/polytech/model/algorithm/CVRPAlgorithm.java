@@ -6,13 +6,14 @@ import com.polytech.model.Solution;
 import com.polytech.model.Step;
 import com.polytech.model.Stop;
 import com.polytech.model.exception.StopNotLoadedException;
-import com.polytech.model.filereader.CVRPFileReader;
+import com.polytech.model.io.CVRPDataWriter;
+import com.polytech.model.io.CVRPFileReader;
 import com.polytech.ui.CustomerScope;
 
 import java.io.IOException;
+import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 import java.util.Random;
 
 public abstract class CVRPAlgorithm {
@@ -25,20 +26,33 @@ public abstract class CVRPAlgorithm {
     public void runAlgorithm(CustomerScope scope) {
         Graph graph = scope.getGraph()
                 .orElseThrow(StopNotLoadedException::new);
-        runAlgorithm(graph, Optional.of(scope));
+        runAlgorithm(graph, scope);
     }
 
-    public void runAlgorithm(String filename) throws IOException {
-        Graph graph = CVRPFileReader.loadDataFile(filename);
-        runAlgorithm(graph, Optional.empty());
+    /**
+     * For each filename in the in the list, load it, run the algorithm on it and make a report
+     *
+     * @param scope the scope we have to notify to update the view
+     * @param filenameList the list of files we have to load and execute
+     * @throws IOException if there is a problem to read or write a file
+     */
+    public void runAlgorithm(CustomerScope scope, List<String> filenameList) throws IOException {
+        String analyseFilename = CVRPDataWriter.initializeFile();
+        for (String fileName : filenameList) {
+            Graph graph = CVRPFileReader.loadDataFile(fileName);
+            long start = System.nanoTime();
+            runAlgorithm(graph, scope);
+            long end = System.nanoTime();
+            CVRPDataWriter.writeData(analyseFilename, graph, this.getClass().getSimpleName(), fileName, Duration.ofNanos(end - start));
+        }
     }
 
-    public abstract void runAlgorithm(Graph graph, Optional<CustomerScope> scope);
+    public abstract void runAlgorithm(Graph graph, CustomerScope scope);
 
     /**
      * Takes stops randomly and inserts them into a route. When it is full, closes it and inserts into another one
      *
-     * @param graph the graph where stops are loaded and in which we have to set the solution
+     * @param graph       the graph where stops are loaded and in which we have to set the solution
      * @param fillingRate a percent of maximul filling of each route
      * @return generated solution
      */

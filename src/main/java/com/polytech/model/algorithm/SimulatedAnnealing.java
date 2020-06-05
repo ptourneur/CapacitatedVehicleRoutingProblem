@@ -4,10 +4,8 @@ import com.polytech.model.Graph;
 import com.polytech.model.Solution;
 import com.polytech.ui.CustomerScope;
 
-import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 public class SimulatedAnnealing extends NeighborhoodAlgorithm {
 
@@ -22,17 +20,16 @@ public class SimulatedAnnealing extends NeighborhoodAlgorithm {
      * - The initial temperature is given by {@code initializeTemperature()}
      *
      * @param graph the graph where stops are loaded and where we have to set the solution
-     * @param optionalScope the scope we have to notify to update the view
+     * @param scope the scope we have to notify to update the view
      */
     @Override
-    public void runAlgorithm(Graph graph, Optional<CustomerScope> optionalScope) {
+    public void runAlgorithm(Graph graph, CustomerScope scope) {
 
-        long start = Instant.now().getEpochSecond();
         Solution currentSolution = CVRPAlgorithm.randomSolution(graph);
         Solution bestSolution = currentSolution;
         double mu = START_DECREASING_LAW;
 
-        optionalScope.ifPresent(scope -> scope.totalIteration().setValue(MAX_TEMPERATURE_CHANGE));
+        scope.totalIteration().setValue(MAX_TEMPERATURE_CHANGE);
 
         Double temperature = null;
 
@@ -61,25 +58,18 @@ public class SimulatedAnnealing extends NeighborhoodAlgorithm {
                     }
                 }
                 graph.setRoutingSolution(currentSolution);
-                if (optionalScope.isPresent()) {
-                    optionalScope.get().currentIteration().setValue(i + 1);
-                    optionalScope.get().publish(ROUTE_LOADED);
-                }
+                scope.currentIteration().setValue(i + 1);
+                scope.publish(ROUTE_LOADED);
             }
             temperature = temperature * mu;
             if (mu < END_DECREASING_LAW) {
                 mu = mu + 0.001;
             }
-            System.out.println(i);
         }
 
         graph.setRoutingSolution(bestSolution);
-        if (optionalScope.isPresent()) {
-            optionalScope.get().currentIteration().setValue(0);
-            optionalScope.get().publish(ROUTE_LOADED);
-        }
-
-        System.out.println(Instant.ofEpochSecond(Instant.now().getEpochSecond() - start));
+        scope.currentIteration().setValue(0);
+        scope.publish(ROUTE_LOADED);
     }
 
     /**

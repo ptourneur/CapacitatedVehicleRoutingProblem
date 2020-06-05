@@ -192,7 +192,8 @@
                     </HBox>
 
                     <HBox spacing="15">
-                        <Button prefHeight="27.0" prefWidth="159.0" text="Charger les données" onAction="#loadData"/>
+                        <Button fx:id="loadButton" prefHeight="27.0" prefWidth="159.0" text="Charger les données"
+                                onAction="#loadData"/>
                         <Button fx:id="launchButton" prefHeight="27.0" prefWidth="149.0" text="Lancer la simulation"
                                 onAction="#launchSimulation"/>
                     </HBox>

@@ -6,7 +6,7 @@ import com.polytech.model.algorithm.CVRPAlgorithm;
 import com.polytech.model.algorithm.GeneticAlgorithm;
 import com.polytech.model.algorithm.SimulatedAnnealing;
 import com.polytech.model.algorithm.TabuSearch;
-import com.polytech.model.filereader.CVRPFileReader;
+import com.polytech.model.io.CVRPFileReader;
 import de.saxsys.mvvmfx.InjectScope;
 import de.saxsys.mvvmfx.ViewModel;
 import de.saxsys.mvvmfx.utils.commands.Action;
@@ -19,9 +19,8 @@ import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.beans.property.SimpleIntegerProperty;
-import javafx.beans.property.SimpleStringProperty;
-import javafx.beans.property.StringProperty;
 import javafx.collections.FXCollections;
+import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.scene.control.ProgressBar;
 
@@ -29,6 +28,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -45,14 +45,14 @@ public class ParamViewModel implements ViewModel {
     private final Command simulatedAnnealingCommand = new DelegateCommand(this::simulatedAnnealingAction, true);
     private final Command tabuSearchCommand = new DelegateCommand(this::tabuSearchAction, true);
     private final Command geneticCommand = new DelegateCommand(this::geneticAlgorithmAction, true);
-    private final Command launchCommand = new CompositeCommand(greedyCommand, simulatedAnnealingCommand, tabuSearchCommand);
+    private final Command launchCommand = new CompositeCommand(greedyCommand, simulatedAnnealingCommand, tabuSearchCommand, geneticCommand);
 
     private final IntegerProperty totalClientNumber = new SimpleIntegerProperty(0);
     private final DoubleProperty totalDistance = new SimpleDoubleProperty(0.0);
     private final IntegerProperty totalVehicleNumber = new SimpleIntegerProperty(0);
 
     private final ObservableList<String> fileList = FXCollections.observableArrayList();
-    private final StringProperty selectedFile = new SimpleStringProperty();
+    private final ObservableList<String> selectedFileList = FXCollections.observableArrayList();
 
     private final BooleanProperty greedySolution = new SimpleBooleanProperty();
     private final BooleanProperty simulatedAnnealingSolution = new SimpleBooleanProperty();
@@ -60,6 +60,7 @@ public class ParamViewModel implements ViewModel {
     private final BooleanProperty geneticSolution = new SimpleBooleanProperty();
 
     private final BooleanProperty stopLoaded = new SimpleBooleanProperty(false);
+    private final BooleanProperty oneFileSelected = new SimpleBooleanProperty(true);
 
     private final DoubleProperty progress = new SimpleDoubleProperty(0.0);
     private final BooleanProperty progressBarVisible = new SimpleBooleanProperty(false);
@@ -100,8 +101,8 @@ public class ParamViewModel implements ViewModel {
         return fileList;
     }
 
-    public StringProperty selectedFile() {
-        return selectedFile;
+    public ObservableList<String> selectedFileList() {
+        return selectedFileList;
     }
 
     public BooleanProperty greedySolution() {
@@ -124,6 +125,10 @@ public class ParamViewModel implements ViewModel {
         return stopLoaded;
     }
 
+    public BooleanProperty oneFileSelected() {
+        return oneFileSelected;
+    }
+
     public DoubleProperty progress() {
         return progress;
     }
@@ -144,13 +149,18 @@ public class ParamViewModel implements ViewModel {
             fileList.addAll(result);
 
         } catch (IOException e) {
-            publish(ERROR_ALERT, e.getClass().getCanonicalName());
+            publish(ERROR_ALERT, e.getClass().getSimpleName());
         }
+        selectedFileList.addListener((ListChangeListener<? super String>) change ->
+                oneFileSelected.setValue(change.getList().size() == 1));
     }
 
     public void loadData() {
         try {
-            Graph graph = CVRPFileReader.loadDataFile(selectedFile.get());
+            if (selectedFileList.size() != 1) {
+                publish(ERROR_ALERT, "Impossible de charger les données");
+            }
+            Graph graph = CVRPFileReader.loadDataFile(selectedFileList.get(0));
             scope.setGraph(graph);
             scope.publish("STOP_LOADED");
             refreshSolutionInformation(graph);
@@ -205,10 +215,14 @@ public class ParamViewModel implements ViewModel {
             @Override
             protected void action() {
                 try {
-                    new SimulatedAnnealing().runAlgorithm(scope);
+                    if (selectedFileList.size() == 1) {
+                        new SimulatedAnnealing().runAlgorithm(scope);
+                    } else {
+                        new SimulatedAnnealing().runAlgorithm(scope, new ArrayList<>(selectedFileList));
+                    }
                 } catch (Exception e) {
+                    publish(ERROR_ALERT, e.getClass().getSimpleName());
                     e.printStackTrace();
-                    publish(ERROR_ALERT, e.getClass().getCanonicalName());
                 }
             }
         };
@@ -219,10 +233,14 @@ public class ParamViewModel implements ViewModel {
             @Override
             protected void action() {
                 try {
-                    new TabuSearch().runAlgorithm(scope);
+                    if (selectedFileList.size() == 1) {
+                        new TabuSearch().runAlgorithm(scope);
+                    } else {
+                        new TabuSearch().runAlgorithm(scope, new ArrayList<>(selectedFileList));
+                    }
                 } catch (Exception e) {
+                    publish(ERROR_ALERT, e.getClass().getSimpleName());
                     e.printStackTrace();
-                    publish(ERROR_ALERT, e.getClass().getCanonicalName());
                 }
             }
         };
@@ -233,8 +251,13 @@ public class ParamViewModel implements ViewModel {
             @Override
             protected void action() {
                 try {
-                    new GeneticAlgorithm().runAlgorithm(scope);
+                    if (selectedFileList.size() == 1) {
+                        new GeneticAlgorithm().runAlgorithm(scope);
+                    } else {
+                        new GeneticAlgorithm().runAlgorithm(scope, new ArrayList<>(selectedFileList));
+                    }
                 } catch (Exception e) {
+                    publish(ERROR_ALERT, e.getClass().getSimpleName());
                     e.printStackTrace();
                 }
             }

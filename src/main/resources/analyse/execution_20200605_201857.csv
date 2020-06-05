@@ -1,0 +1,4 @@
+Algorithm;File;Client number;Route number;Fitness;Time (nanoseconds);Time minutes:seconds;Execution date
+GeneticAlgorithm;A3205.txt;31;5;819.5792145472424;6256118913;0:6;05/06/2020 20:19:03
+GeneticAlgorithm;A3305.txt;32;5;674.1165350267484;10247745575;0:10;05/06/2020 20:19:13
+GeneticAlgorithm;A3405.txt;33;6;843.2134324686425;5736651509;0:5;05/06/2020 20:19:19

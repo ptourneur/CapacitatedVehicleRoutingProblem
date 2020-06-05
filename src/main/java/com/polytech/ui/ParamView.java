@@ -2,6 +2,7 @@ package com.polytech.ui;
 
 import de.saxsys.mvvmfx.FxmlView;
 import de.saxsys.mvvmfx.InjectViewModel;
+import javafx.collections.ListChangeListener;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Alert;
@@ -10,6 +11,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.control.ProgressBar;
 import javafx.scene.control.RadioButton;
+import javafx.scene.control.SelectionMode;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.control.Tooltip;
 import javafx.scene.image.ImageView;
@@ -52,6 +54,8 @@ public class ParamView implements FxmlView<ParamViewModel>, Initializable {
     private RadioButton geneticSolutionButton;
 
     @FXML
+    private Button loadButton;
+    @FXML
     private Button launchButton;
 
     @FXML
@@ -84,7 +88,11 @@ public class ParamView implements FxmlView<ParamViewModel>, Initializable {
         selectedVehicleCapacity.textProperty().bind(paramViewModel.selectedVehicleCapacity().asString());
 
         fileListView.setItems(paramViewModel.fileList());
-        paramViewModel.selectedFile().bind(fileListView.getSelectionModel().selectedItemProperty());
+        fileListView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
+        fileListView.getSelectionModel().getSelectedItems().addListener((ListChangeListener<? super String>) change -> {
+            paramViewModel.selectedFileList().clear();
+            paramViewModel.selectedFileList().addAll(change.getList());
+        });
         fileListView.getSelectionModel().select(0);
 
         greedySolutionButton.setToggleGroup(radioButtonGroup);
@@ -96,7 +104,9 @@ public class ParamView implements FxmlView<ParamViewModel>, Initializable {
         geneticSolutionButton.setToggleGroup(radioButtonGroup);
         paramViewModel.geneticSolution().bind(geneticSolutionButton.selectedProperty());
 
-        launchButton.disableProperty().bind(paramViewModel.stopLoaded().not().or(paramViewModel.launchCommand().runningProperty()));
+        loadButton.disableProperty().bind(paramViewModel.launchCommand().runningProperty());
+        launchButton.disableProperty().bind(paramViewModel.launchCommand().runningProperty()
+                .or(paramViewModel.oneFileSelected().and(paramViewModel.stopLoaded().not())));
 
         progressBar.progressProperty().bind(paramViewModel.progress());
         progressBar.visibleProperty().bind(paramViewModel.progressBarVisible());
