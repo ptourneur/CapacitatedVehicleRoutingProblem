@@ -20,6 +20,7 @@ public abstract class CVRPAlgorithm {
 
     public static final double VEHICLE_CAPACITY = 100;
     public static final String ROUTE_LOADED = "ROUTE_LOADED";
+    public static final String STOP_LOADED = "STOP_LOADED";
 
     protected static final Random random = new Random();
 
@@ -40,6 +41,8 @@ public abstract class CVRPAlgorithm {
         String analyseFilename = CVRPDataWriter.initializeFile();
         for (String fileName : filenameList) {
             Graph graph = CVRPFileReader.loadDataFile(fileName);
+            scope.setGraph(graph);
+            scope.publish(STOP_LOADED);
             long start = System.nanoTime();
             runAlgorithm(graph, scope);
             long end = System.nanoTime();
@@ -53,7 +56,7 @@ public abstract class CVRPAlgorithm {
      * Takes stops randomly and inserts them into a route. When it is full, closes it and inserts into another one
      *
      * @param graph       the graph where stops are loaded and in which we have to set the solution
-     * @param fillingRate a percent of maximul filling of each route
+     * @param fillingRate a percent of maximum filling of each route
      * @return generated solution
      */
     public static Solution randomSolution(Graph graph, double fillingRate) {

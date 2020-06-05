@@ -36,7 +36,7 @@ public class GeneticAlgorithm extends CVRPAlgorithm {
         LinkedList<Solution> population = new LinkedList<>();
 
         for (int i = 0; i < POPULATION_SIZE; i++) {
-            population.add(CVRPAlgorithm.randomSolution(graph, 0.5));
+            population.add(CVRPAlgorithm.randomSolution(graph, 0.9));
         }
         while (population.stream().distinct().count() > 1) {
             // We select individuals for crossover
