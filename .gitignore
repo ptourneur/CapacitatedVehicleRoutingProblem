@@ -60,6 +60,7 @@ crashlytics.properties
 crashlytics-build.properties
 
 /target
+/src/main/resources/analyse
 
 # Created by .ignore support plugin (hsz.mobi)
 *.docx
