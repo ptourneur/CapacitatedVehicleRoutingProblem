@@ -34,7 +34,7 @@ public final class CVRPDataWriter {
                 fileName,
                 Integer.toString(stopNumber),
                 Integer.toString(solution.getRouteList().size()),
-                Double.toString(solution.getFitness()),
+                Double.toString(solution.getFitness()).replace(".", ","),
                 Long.toString(duration.toNanos()),
                 duration.toMinutes() + ":" + duration.toSecondsPart(),
                 dtf.format(now));

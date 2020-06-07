@@ -16,9 +16,9 @@ import java.util.stream.Collectors;
 
 public class GeneticAlgorithm extends CVRPAlgorithm {
 
-    private static final int POPULATION_SIZE = 100;
+    private static final int POPULATION_SIZE = 200;
     private static final int SELECTED_SOLUTION_PER_SELECTION = POPULATION_SIZE;
-    private static final double MUTATION_PROBABILITY = 0.1;
+    private static final double MUTATION_PROBABILITY = 0.13;
 
     /**
      * Genetic algorithm implementation
@@ -100,7 +100,7 @@ public class GeneticAlgorithm extends CVRPAlgorithm {
 
         // We initialize the probability array
         for (int i = 0; i < probabilityArray.length; i++) {
-            currentProbability = currentProbability + (population.get(i).getFitness() / fitnessSum);
+            currentProbability = currentProbability + ((1 - (population.get(i).getFitness() / fitnessSum)) / (population.size() - 1));
             probabilityArray[i] = currentProbability;
         }
 
@@ -108,7 +108,7 @@ public class GeneticAlgorithm extends CVRPAlgorithm {
         for (int i = 0; i < SELECTED_SOLUTION_PER_SELECTION; i++) {
             double randomProbability = random.nextDouble();
             for (int j = 0; j < probabilityArray.length; j++) {
-                if (probabilityArray[j] > randomProbability) {
+                if (randomProbability < probabilityArray[j]) {
                     selection.add(population.get(j));
                     break;
                 }
